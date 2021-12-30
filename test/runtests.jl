@@ -107,6 +107,15 @@ using Sqlite3Stats.SQLite
         @test result[!, "MYHARMMEAN"] == [3.414171521474055]
     end 
 
+    @testset "MAXAD" begin    
+        result = DBInterface.execute(db, "select MAXAD(val, val) as m from Numbers") |> DataFrame
+        @test result[!, "m"] == [0.0]
+
+        result = DBInterface.execute(db, "select MAXAD(val, otherval) as m from Numbers") |> DataFrame
+        @test result[!, "m"] == [9.0]
+    end 
+
+
     @info "Closing db " dbname 
     SQLite.close(db)
 
