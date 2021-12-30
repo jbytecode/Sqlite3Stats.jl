@@ -123,6 +123,14 @@ using Sqlite3Stats.SQLite
         @test result[!, "m"] == [5.0]
     end 
 
+    @testset "MSD" begin    
+        result = DBInterface.execute(db, "select MSD(val, val) as m from Numbers") |> DataFrame
+        @test result[!, "m"] == [0.0]
+
+        result = DBInterface.execute(db, "select MSD(val, otherval) as m from Numbers") |> DataFrame
+        @test result[!, "m"] == [33.0]
+    end 
+
 
     @info "Closing db " dbname 
     SQLite.close(db)

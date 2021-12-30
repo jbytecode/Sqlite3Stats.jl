@@ -60,6 +60,9 @@ result = DBInterface.execute(db, "select MAXAD(num) from table") |> DataFrame
 
 # Mean absolute deviations
 result = DBInterface.execute(db, "select MEANAD(num) from table") |> DataFrame 
+
+# Mean squared deviations
+result = DBInterface.execute(db, "select MSD(num) from table") |> DataFrame 
 ```
 
 
