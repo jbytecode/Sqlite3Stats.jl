@@ -97,6 +97,11 @@ function register_functions(db::SQLite.DB)::Nothing
         x -> StatsBase.harmmean(convert(Array{Float64, 1}, x)), 
         name = "HARMMEAN")
 
+    SQLite.register(db, [], 
+        (x,y) -> vcat(x, y), 
+        x -> StatsBase.mode(convert(Array{Float64, 1}, x)), 
+        name = "MODE")
+
     return nothing
 end
 

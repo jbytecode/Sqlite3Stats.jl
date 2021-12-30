@@ -63,6 +63,10 @@ result = DBInterface.execute(db, "select MEANAD(num) from table") |> DataFrame
 
 # Mean squared deviations
 result = DBInterface.execute(db, "select MSD(num) from table") |> DataFrame 
+
+# Mode
+result = DBInterface.execute(db, "select MODE(num) from table") |> DataFrame 
+
 ```
 
 
