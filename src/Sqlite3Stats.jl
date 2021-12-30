@@ -49,10 +49,17 @@ function register_functions(db::SQLite.DB)::Nothing
         x -> StatsBase.corkendall(x[:,1], x[:,2]), 
         name = "CORKENDALL", nargs = 2)
 
+    # Maximum absolute deviations 
     SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.maxad(x[:,1], x[:,2]), 
         name = "MAXAD", nargs = 2)
+
+    # Mean absolute deviations 
+    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+        (x, a, b) -> vcat(x, [a, b]'), 
+        x -> StatsBase.meanad(x[:,1], x[:,2]), 
+        name = "MEANAD", nargs = 2)
 
     SQLite.register(db, [], 
         (x,y) -> vcat(x, y), 

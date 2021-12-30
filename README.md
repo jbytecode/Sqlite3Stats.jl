@@ -54,6 +54,12 @@ result = DBInterface.execute(db, "select GEOMEAN(num) from table") |> DataFrame
 
 # Harmonic Mean
 result = DBInterface.execute(db, "select HARMMEAN(num) from table") |> DataFrame 
+
+# Maximum absolute deviations
+result = DBInterface.execute(db, "select MAXAD(num) from table") |> DataFrame 
+
+# Mean absolute deviations
+result = DBInterface.execute(db, "select MEANAD(num) from table") |> DataFrame 
 ```
 
 

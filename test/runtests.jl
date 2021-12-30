@@ -115,6 +115,14 @@ using Sqlite3Stats.SQLite
         @test result[!, "m"] == [9.0]
     end 
 
+    @testset "MEANAD" begin    
+        result = DBInterface.execute(db, "select MEANAD(val, val) as m from Numbers") |> DataFrame
+        @test result[!, "m"] == [0.0]
+
+        result = DBInterface.execute(db, "select MEANAD(val, otherval) as m from Numbers") |> DataFrame
+        @test result[!, "m"] == [5.0]
+    end 
+
 
     @info "Closing db " dbname 
     SQLite.close(db)
