@@ -29,13 +29,13 @@ result = DBInterface.execute(db, "select Q3(num) from table") |> DataFrame
 result = DBInterface.execute(db, "select COV(num, other) from table") |> DataFrame 
 
 # Pearson Correlation 
-result = DBInterface.execute(db, "select COR(num) from table") |> DataFrame 
+result = DBInterface.execute(db, "select COR(num, other) from table") |> DataFrame 
 
 # Spearman Correlation
-result = DBInterface.execute(db, "select SPEARMANCOR(num) from table") |> DataFrame 
+result = DBInterface.execute(db, "select SPEARMANCOR(num, other) from table") |> DataFrame 
 
 # Kendall Correlation
-result = DBInterface.execute(db, "select KENDALLCOR(num) from table") |> DataFrame 
+result = DBInterface.execute(db, "select KENDALLCOR(num, other) from table") |> DataFrame 
 
 # Median Absolute Deviations 
 result = DBInterface.execute(db, "select MAD(num) from table") |> DataFrame 
