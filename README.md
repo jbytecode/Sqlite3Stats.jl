@@ -25,6 +25,12 @@ result = DBInterface.execute(db, "select MEDIAN(num) from table") |> DataFrame
 # 3rd Quartile 
 result = DBInterface.execute(db, "select Q3(num) from table") |> DataFrame 
 
+# QUANTILE
+result = DBInterface.execute(db, "select QUANTILE(num, 0.25) from table") |> DataFrame 
+result = DBInterface.execute(db, "select QUANTILE(num, 0.50) from table") |> DataFrame 
+result = DBInterface.execute(db, "select QUANTILE(num, 0.75) from table") |> DataFrame 
+
+
 # Covariance 
 result = DBInterface.execute(db, "select COV(num, other) from table") |> DataFrame 
 
@@ -66,6 +72,12 @@ result = DBInterface.execute(db, "select MSD(num) from table") |> DataFrame
 
 # Mode
 result = DBInterface.execute(db, "select MODE(num) from table") |> DataFrame 
+
+# WMEAN for weighted mean
+result = DBInterface.execute(db, "select WMEAN(num, weights) from table") |> DataFrame 
+
+# WMEDIAN for weighted mean
+result = DBInterface.execute(db, "select WMEDIAN(num, weights) from table") |> DataFrame 
 
 ```
 

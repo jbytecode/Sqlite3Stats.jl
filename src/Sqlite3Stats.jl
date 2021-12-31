@@ -7,8 +7,11 @@ export StatsBase
 export SQLite
 
 
-function register_functions(db::SQLite.DB)::Nothing
+function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
 
+    if verbose
+        @info "Registering Q1"
+    end
     SQLite.register(db, [], 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.25), 
@@ -28,6 +31,11 @@ function register_functions(db::SQLite.DB)::Nothing
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.75), 
         name = "Q3")
+
+    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+        (x, a, b) -> vcat(x, [a, b]'), 
+        x -> StatsBase.quantile(x[:,1], x[1,2]), 
+        name = "QUANTILE", nargs = 2)    
 
     SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
         (x, a, b) -> vcat(x, [a, b]'), 
@@ -101,6 +109,16 @@ function register_functions(db::SQLite.DB)::Nothing
         (x,y) -> vcat(x, y), 
         x -> StatsBase.mode(convert(Array{Float64, 1}, x)), 
         name = "MODE")
+
+    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+        (x, a, b) -> vcat(x, [a, b]'), 
+        x -> StatsBase.mean(x[:,1], StatsBase.weights(x[:,2])), 
+        name = "WMEAN", nargs = 2)
+
+    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+        (x, a, b) -> vcat(x, [a, b]'), 
+        x -> StatsBase.median(x[:,1], StatsBase.weights(x[:,2])), 
+        name = "WMEDIAN", nargs = 2)
 
     return nothing
 end

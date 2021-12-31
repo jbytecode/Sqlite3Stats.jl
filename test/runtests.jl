@@ -48,6 +48,17 @@ using Sqlite3Stats.SQLite
         @test result[!, "MYQ3"] == [7.75]
     end 
 
+    @testset "QUANTILE" begin
+        result = DBInterface.execute(db, "select QUANTILE(val, 0.25) as MYRESULT from Numbers") |> DataFrame
+        @test result[!, "MYRESULT"] == [3.25]
+
+        result = DBInterface.execute(db, "select QUANTILE(val, 0.50) as MYRESULT from Numbers") |> DataFrame
+        @test result[!, "MYRESULT"] == [5.5]
+        
+        result = DBInterface.execute(db, "select QUANTILE(val, 0.75) as MYRESULT from Numbers") |> DataFrame
+        @test result[!, "MYRESULT"] == [7.75]
+    end 
+
     @testset "COV" begin
         result = DBInterface.execute(db, "select COV(val, val) as MYCOV from Numbers") |> DataFrame
         @test result[!, "MYCOV"] == [9.166666666666666]
@@ -141,6 +152,60 @@ using Sqlite3Stats.SQLite
 
 
     @info "Closing db " dbname 
+    SQLite.close(db)
+
+    @info "Deleting db"
+    rm(dbname)
+end
+
+
+@testset "Weighted Functions" begin
+    dbname, _ = mktemp()
+
+    @info "Creating database: " dbname 
+    db = SQLite.DB(dbname)
+
+    @info "Creating test table"
+    SQLite.execute(db, "create table Numbers (val float, w float)")
+    x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+    w = [
+        0.01818181818181818,
+        0.03636363636363636,
+        0.05454545454545454,
+        0.07272727272727272,
+        0.09090909090909091,
+        0.10909090909090909,
+        0.12727272727272726,
+        0.14545454545454545,
+        0.16363636363636364,
+        0.18181818181818182
+    ]
+    for i in 1:10
+        v = x[i]
+        y = w[i]
+        SQLite.execute(db, "insert into Numbers (val, w) values ($(v), $(y))")
+    end
+
+    @info "DB Content:"
+    result = DBInterface.execute(db, "select val, w from Numbers") |> DataFrame 
+    @show result
+
+    Sqlite3Stats.register_functions(db)
+
+    result = DBInterface.execute(db, "select val, w from Numbers") |> DataFrame
+    @test size(result) == (10, 2)
+
+    @testset "WMEAN" begin
+        result = DBInterface.execute(db, "select WMEAN(val, w) as MYRESULT from Numbers") |> DataFrame
+        @test result[!, "MYRESULT"] == [7.0]
+    end 
+
+    @testset "WMEDIAN" begin
+        result = DBInterface.execute(db, "select WMEDIAN(val, w) as MYRESULT from Numbers") |> DataFrame
+        @test result[!, "MYRESULT"] == [7.0]
+    end 
+
+     @info "Closing db " dbname 
     SQLite.close(db)
 
     @info "Deleting db"
