@@ -1,7 +1,7 @@
 name = "Sqlite3Stats"
 uuid = "b8827193-453e-47cb-8319-1562ac79a546"
 authors = ["jbytecode <mhsatman@gmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 SQLite = "0aa819cd-b072-5ff4-a722-6bc24af294d9"

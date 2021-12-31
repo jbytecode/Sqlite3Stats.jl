@@ -205,6 +205,11 @@ end
         @test result[!, "MYRESULT"] == [7.0]
     end 
 
+    @testset "ENTROPY" begin
+        result = DBInterface.execute(db, "select ENTROPY(w) as MYRESULT from Numbers") |> DataFrame
+        @test result[!, "MYRESULT"] == [2.151281720651836]
+    end 
+
      @info "Closing db " dbname 
     SQLite.close(db)
 

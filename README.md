@@ -79,6 +79,9 @@ result = DBInterface.execute(db, "select WMEAN(num, weights) from table") |> Dat
 # WMEDIAN for weighted mean
 result = DBInterface.execute(db, "select WMEDIAN(num, weights) from table") |> DataFrame 
 
+# Entropy
+result = DBInterface.execute(db, "select ENTROPY(probs) from table") |> DataFrame 
+
 ```
 
 

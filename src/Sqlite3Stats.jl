@@ -120,6 +120,11 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
         x -> StatsBase.median(x[:,1], StatsBase.weights(x[:,2])), 
         name = "WMEDIAN", nargs = 2)
 
+    SQLite.register(db, [], 
+        (x,y) -> vcat(x, y), 
+        x -> StatsBase.entropy(convert(Array{Float64, 1}, x)), 
+        name = "ENTROPY")
+
     return nothing
 end
 
