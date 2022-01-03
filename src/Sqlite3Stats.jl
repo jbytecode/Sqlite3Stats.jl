@@ -6,12 +6,17 @@ import SQLite
 export StatsBase
 export SQLite
 
+function linear_regression(x::Array{Float64, 1}, y::Array{Float64, 1})::Array{Float64, 1}
+    meanx = StatsBase.mean(x)
+    meany = StatsBase.mean(y)
+    beta1 = sum((x .- meanx) .* (y .- meany)) / sum( (x .- meanx) .* (x .- meanx))
+    beta0 = meany - beta1 * meanx 
+    return [beta0, beta1]
+end
+
 
 function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
 
-    if verbose
-        @info "Registering Q1"
-    end
     SQLite.register(db, [], 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.25), 
@@ -124,6 +129,16 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
         (x,y) -> vcat(x, y), 
         x -> StatsBase.entropy(convert(Array{Float64, 1}, x)), 
         name = "ENTROPY")
+
+    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+        (x, a, b) -> vcat(x, [a, b]'), 
+        x -> linear_regression(x[:,1], x[:,2])[2], 
+        name = "LINSLOPE", nargs = 2)
+
+    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+        (x, a, b) -> vcat(x, [a, b]'), 
+        x -> linear_regression(x[:,1], x[:,2])[1], 
+        name = "LININTERCEPT", nargs = 2)
 
     return nothing
 end

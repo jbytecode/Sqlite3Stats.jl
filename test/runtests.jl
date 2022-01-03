@@ -210,9 +210,54 @@ end
         @test result[!, "MYRESULT"] == [2.151281720651836]
     end 
 
-     @info "Closing db " dbname 
+    @info "Closing db " dbname 
     SQLite.close(db)
 
     @info "Deleting db"
     rm(dbname)
+end
+
+@testset "Linear Regression" begin
+
+    dbname, _ = mktemp()
+
+    @info "Creating database: " dbname 
+    db = SQLite.DB(dbname)
+
+    @info "Creating test table"
+    SQLite.execute(db, "create table Numbers (x float, y float)")
+    x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+    y = 2.0 .* x
+    for i in 1:10
+        u = x[i]
+        v = y[i]
+        SQLite.execute(db, "insert into Numbers (x, y) values ($(u), $(v))")
+    end
+
+    Sqlite3Stats.register_functions(db)
+
+    @testset "Raw function" begin
+        x = [1.0, 2.0, 3.0, 4.0, 5.0]
+        y = [2.0, 4.0, 6.0, 8.0, 10.0]
+        reg = Sqlite3Stats.linear_regression(x, y)
+        @test reg[1] == 0.0
+        @test reg[2] == 2.0
+    end
+
+    @testset "LINSLOPE" begin
+        result = DBInterface.execute(db, "select LINSLOPE(x, y) as MYRESULT from Numbers") |> DataFrame
+        @test result[!, "MYRESULT"] == [2.0]
+    end
+
+    @testset "LININTERCEPT" begin
+        result = DBInterface.execute(db, "select LININTERCEPT(x, y) as MYRESULT from Numbers") |> DataFrame
+        @test result[!, "MYRESULT"] == [0.0]
+    end
+
+    @info "Closing db " dbname 
+    SQLite.close(db)
+
+    @info "Deleting db"
+    rm(dbname)
+
 end

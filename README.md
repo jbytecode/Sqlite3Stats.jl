@@ -82,6 +82,12 @@ result = DBInterface.execute(db, "select WMEDIAN(num, weights) from table") |> D
 # Entropy
 result = DBInterface.execute(db, "select ENTROPY(probs) from table") |> DataFrame 
 
+# Slope (a) of linear regression y = b + ax
+result = DBInterface.execute(db, "select LINSLOPE(x, y) from table") |> DataFrame 
+
+# Intercept (b) of linear regression y = b + ax
+result = DBInterface.execute(db, "select LININTERCEPT(x, y) from table") |> DataFrame 
+
 ```
 
 
