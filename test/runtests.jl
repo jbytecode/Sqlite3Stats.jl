@@ -18,7 +18,7 @@ using Sqlite3Stats.SQLite
     end
 
     @info "DB Content:"
-    result = DBInterface.execute(db, "select val, otherval from Numbers") |> DataFrame 
+    result = DBInterface.execute(db, "select val, otherval from Numbers") |> DataFrame
     @show result
 
     Sqlite3Stats.register_functions(db)
@@ -27,136 +27,197 @@ using Sqlite3Stats.SQLite
     @test size(result) == (10, 2)
 
     @testset "Q1" begin
-        result = DBInterface.execute(db, "select count(val), Q1(val) as MYQ1 from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select count(val), Q1(val) as MYQ1 from Numbers") |>
+            DataFrame
         @test result[!, "MYQ1"] == [3.25]
-    end 
+    end
 
     @testset "Q2" begin
-        result = DBInterface.execute(db, "select count(val), Q2(val) as MYQ2 from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select count(val), Q2(val) as MYQ2 from Numbers") |>
+            DataFrame
         @test result[!, "MYQ2"] == [5.5]
-    end 
+    end
 
     @testset "MEDIAN" begin
-        result = DBInterface.execute(db, "select count(val), MEDIAN(val) as MYMEDIAN from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(
+                db,
+                "select count(val), MEDIAN(val) as MYMEDIAN from Numbers",
+            ) |> DataFrame
         @test result[!, "MYMEDIAN"] == [5.5]
-    end 
-    
+    end
+
     @testset "Q3" begin
-        result = DBInterface.execute(db, "select count(val), Q3(val) as MYQ3 from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select count(val), Q3(val) as MYQ3 from Numbers") |>
+            DataFrame
         @test result[!, "MYQ3"] == [7.75]
-    end 
+    end
 
     @testset "QUANTILE" begin
-        result = DBInterface.execute(db, "select QUANTILE(val, 0.25) as MYRESULT from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(
+                db,
+                "select QUANTILE(val, 0.25) as MYRESULT from Numbers",
+            ) |> DataFrame
         @test result[!, "MYRESULT"] == [3.25]
 
-        result = DBInterface.execute(db, "select QUANTILE(val, 0.50) as MYRESULT from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(
+                db,
+                "select QUANTILE(val, 0.50) as MYRESULT from Numbers",
+            ) |> DataFrame
         @test result[!, "MYRESULT"] == [5.5]
-        
-        result = DBInterface.execute(db, "select QUANTILE(val, 0.75) as MYRESULT from Numbers") |> DataFrame
+
+        result =
+            DBInterface.execute(
+                db,
+                "select QUANTILE(val, 0.75) as MYRESULT from Numbers",
+            ) |> DataFrame
         @test result[!, "MYRESULT"] == [7.75]
-    end 
+    end
 
     @testset "COV" begin
-        result = DBInterface.execute(db, "select COV(val, val) as MYCOV from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select COV(val, val) as MYCOV from Numbers") |>
+            DataFrame
         @test result[!, "MYCOV"] == [9.166666666666666]
-    end 
+    end
 
-    @testset "COR" begin    
-        result = DBInterface.execute(db, "select COR(val, val) as MYCOR from Numbers") |> DataFrame
+    @testset "COR" begin
+        result =
+            DBInterface.execute(db, "select COR(val, val) as MYCOR from Numbers") |>
+            DataFrame
         @test result[!, "MYCOR"] == [1.0]
 
-        result = DBInterface.execute(db, "select COR(val, otherval) as MYCOR from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select COR(val, otherval) as MYCOR from Numbers") |>
+            DataFrame
         @test result[!, "MYCOR"] == [-1.0]
-    end 
+    end
 
-    @testset "CORSPEARMAN" begin    
-        result = DBInterface.execute(db, "select CORSPEARMAN(val, val) as MYCOR from Numbers") |> DataFrame
+    @testset "CORSPEARMAN" begin
+        result =
+            DBInterface.execute(db, "select CORSPEARMAN(val, val) as MYCOR from Numbers") |>
+            DataFrame
         @test result[!, "MYCOR"] == [1.0]
 
-        result = DBInterface.execute(db, "select CORSPEARMAN(val, otherval) as MYCOR from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(
+                db,
+                "select CORSPEARMAN(val, otherval) as MYCOR from Numbers",
+            ) |> DataFrame
         @test result[!, "MYCOR"] == [-1.0]
-    end 
+    end
 
-    @testset "CORKENDALL" begin    
-        result = DBInterface.execute(db, "select CORKENDALL(val, val) as MYCOR from Numbers") |> DataFrame
+    @testset "CORKENDALL" begin
+        result =
+            DBInterface.execute(db, "select CORKENDALL(val, val) as MYCOR from Numbers") |>
+            DataFrame
         @test result[!, "MYCOR"] == [1.0]
 
-        result = DBInterface.execute(db, "select CORKENDALL(val, otherval) as MYCOR from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(
+                db,
+                "select CORKENDALL(val, otherval) as MYCOR from Numbers",
+            ) |> DataFrame
         @test result[!, "MYCOR"] == [-1.0]
-    end 
+    end
 
     @testset "MAD" begin
-        result = DBInterface.execute(db, "select MAD(val) as MYMAD from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select MAD(val) as MYMAD from Numbers") |> DataFrame
         @test result[!, "MYMAD"] == [3.7065055462640046]
-    end 
+    end
 
     @testset "IQR" begin
-        result = DBInterface.execute(db, "select IQR(val) as MYIQR from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select IQR(val) as MYIQR from Numbers") |> DataFrame
         @test result[!, "MYIQR"] == [4.5]
-    end 
+    end
 
     @testset "SKEWNESS" begin
-        result = DBInterface.execute(db, "select SKEWNESS(val) as MYSKEW from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select SKEWNESS(val) as MYSKEW from Numbers") |>
+            DataFrame
         @test result[!, "MYSKEW"] == [0.0]
-    end 
+    end
 
     @testset "KURTOSIS" begin
-        result = DBInterface.execute(db, "select KURTOSIS(val) as MYKURT from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select KURTOSIS(val) as MYKURT from Numbers") |>
+            DataFrame
         @test result[!, "MYKURT"] == [-1.2242424242424244]
-    end 
+    end
 
     @testset "GEOMEAN" begin
-        result = DBInterface.execute(db, "select GEOMEAN(val) as MYGEOMEAN from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select GEOMEAN(val) as MYGEOMEAN from Numbers") |>
+            DataFrame
         @test result[!, "MYGEOMEAN"] == [4.528728688116766]
-    end 
+    end
 
     @testset "HARMMEAN" begin
-        result = DBInterface.execute(db, "select HARMMEAN(val) as MYHARMMEAN from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select HARMMEAN(val) as MYHARMMEAN from Numbers") |>
+            DataFrame
         @test result[!, "MYHARMMEAN"] == [3.414171521474055]
-    end 
+    end
 
     @testset "MODE" begin
         result = DBInterface.execute(db, "select MODE(val) as m from Numbers") |> DataFrame
         @test result[!, "m"] == [1.0]
 
-        result = DBInterface.execute(db, "select MODE(otherval) as m from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select MODE(otherval) as m from Numbers") |> DataFrame
         @test result[!, "m"] == [10.0]
-    end 
+    end
 
-    @testset "MAXAD" begin    
-        result = DBInterface.execute(db, "select MAXAD(val, val) as m from Numbers") |> DataFrame
+    @testset "MAXAD" begin
+        result =
+            DBInterface.execute(db, "select MAXAD(val, val) as m from Numbers") |> DataFrame
         @test result[!, "m"] == [0.0]
 
-        result = DBInterface.execute(db, "select MAXAD(val, otherval) as m from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select MAXAD(val, otherval) as m from Numbers") |>
+            DataFrame
         @test result[!, "m"] == [9.0]
-    end 
+    end
 
-    @testset "MEANAD" begin    
-        result = DBInterface.execute(db, "select MEANAD(val, val) as m from Numbers") |> DataFrame
+    @testset "MEANAD" begin
+        result =
+            DBInterface.execute(db, "select MEANAD(val, val) as m from Numbers") |>
+            DataFrame
         @test result[!, "m"] == [0.0]
 
-        result = DBInterface.execute(db, "select MEANAD(val, otherval) as m from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select MEANAD(val, otherval) as m from Numbers") |>
+            DataFrame
         @test result[!, "m"] == [5.0]
-    end 
+    end
 
-    @testset "MSD" begin    
-        result = DBInterface.execute(db, "select MSD(val, val) as m from Numbers") |> DataFrame
+    @testset "MSD" begin
+        result =
+            DBInterface.execute(db, "select MSD(val, val) as m from Numbers") |> DataFrame
         @test result[!, "m"] == [0.0]
 
-        result = DBInterface.execute(db, "select MSD(val, otherval) as m from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select MSD(val, otherval) as m from Numbers") |>
+            DataFrame
         @test result[!, "m"] == [33.0]
-    end 
+    end
 
 
-    @info "Closing db " 
+    @info "Closing db "
     SQLite.close(db)
 end
 
 
 @testset "Weighted Functions" begin
-    
-    @info "Creating database: "  
+
+    @info "Creating database: "
     db = SQLite.DB()
 
     @info "Creating test table"
@@ -172,16 +233,16 @@ end
         0.12727272727272726,
         0.14545454545454545,
         0.16363636363636364,
-        0.18181818181818182
+        0.18181818181818182,
     ]
-    for i in 1:10
+    for i = 1:10
         v = x[i]
         y = w[i]
         SQLite.execute(db, "insert into Numbers (val, w) values ($(v), $(y))")
     end
 
     @info "DB Content:"
-    result = DBInterface.execute(db, "select val, w from Numbers") |> DataFrame 
+    result = DBInterface.execute(db, "select val, w from Numbers") |> DataFrame
     @show result
 
     Sqlite3Stats.register_functions(db)
@@ -190,35 +251,41 @@ end
     @test size(result) == (10, 2)
 
     @testset "WMEAN" begin
-        result = DBInterface.execute(db, "select WMEAN(val, w) as MYRESULT from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select WMEAN(val, w) as MYRESULT from Numbers") |>
+            DataFrame
         @test result[!, "MYRESULT"] == [7.0]
-    end 
+    end
 
     @testset "WMEDIAN" begin
-        result = DBInterface.execute(db, "select WMEDIAN(val, w) as MYRESULT from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select WMEDIAN(val, w) as MYRESULT from Numbers") |>
+            DataFrame
         @test result[!, "MYRESULT"] == [7.0]
-    end 
+    end
 
     @testset "ENTROPY" begin
-        result = DBInterface.execute(db, "select ENTROPY(w) as MYRESULT from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select ENTROPY(w) as MYRESULT from Numbers") |>
+            DataFrame
         @test result[!, "MYRESULT"] == [2.151281720651836]
-    end 
+    end
 
-    @info "Closing db "  
+    @info "Closing db "
     SQLite.close(db)
 
 end
 
 @testset "Linear Regression" begin
 
-    @info "Creating database: "  
+    @info "Creating database: "
     db = SQLite.DB()
 
     @info "Creating test table"
     SQLite.execute(db, "create table Numbers (x float, y float)")
     x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     y = 2.0 .* x
-    for i in 1:10
+    for i = 1:10
         u = x[i]
         v = y[i]
         SQLite.execute(db, "insert into Numbers (x, y) values ($(u), $(v))")
@@ -235,15 +302,76 @@ end
     end
 
     @testset "LINSLOPE" begin
-        result = DBInterface.execute(db, "select LINSLOPE(x, y) as MYRESULT from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select LINSLOPE(x, y) as MYRESULT from Numbers") |>
+            DataFrame
         @test result[!, "MYRESULT"] == [2.0]
     end
 
     @testset "LININTERCEPT" begin
-        result = DBInterface.execute(db, "select LININTERCEPT(x, y) as MYRESULT from Numbers") |> DataFrame
+        result =
+            DBInterface.execute(db, "select LININTERCEPT(x, y) as MYRESULT from Numbers") |>
+            DataFrame
         @test result[!, "MYRESULT"] == [0.0]
     end
 
-    @info "Closing db" 
+    @info "Closing db"
     SQLite.close(db)
+end
+
+
+
+@testset "Normal Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    @testset "QNORM" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select QNORM(0.025, 0, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"], [-1.95996], atol = tol)
+    end
+
+    @testset "PNORM" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PNORM(1.9599639845400576, 0, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"], [0.0584451], atol = tol)
+    end
+
+    @testset "RNORM" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RNORM(0, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] < 10.0
+        @test result[!, "MYRESULT"][1] > -10.0
+    end
+
+    @testset "RNORM" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RNORM(10, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] < 30.0
+        @test result[!, "MYRESULT"][1] > -10.0
+    end
+
 end

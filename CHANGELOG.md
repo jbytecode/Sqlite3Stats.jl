@@ -1,3 +1,9 @@
+# 0.1.3
+- Added Distributions as a dependency
+- QNORM
+- PNORM
+- RNORM
+
 # 0.1.2
 - LINSLOPE and LININTERCEPT for linear regression y = intercept + slope x
   
