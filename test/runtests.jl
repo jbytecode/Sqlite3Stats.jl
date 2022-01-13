@@ -6,10 +6,8 @@ using Sqlite3Stats.SQLite
 
 
 @testset "Functions" begin
-    dbname, _ = mktemp()
-
-    @info "Creating database: " dbname 
-    db = SQLite.DB(dbname)
+    @info "Creating database: "
+    db = SQLite.DB()
 
     @info "Creating test table"
     SQLite.execute(db, "create table Numbers (val float, otherval float)")
@@ -151,19 +149,15 @@ using Sqlite3Stats.SQLite
     end 
 
 
-    @info "Closing db " dbname 
+    @info "Closing db " 
     SQLite.close(db)
-
-    @info "Deleting db"
-    rm(dbname)
 end
 
 
 @testset "Weighted Functions" begin
-    dbname, _ = mktemp()
-
-    @info "Creating database: " dbname 
-    db = SQLite.DB(dbname)
+    
+    @info "Creating database: "  
+    db = SQLite.DB()
 
     @info "Creating test table"
     SQLite.execute(db, "create table Numbers (val float, w float)")
@@ -210,19 +204,15 @@ end
         @test result[!, "MYRESULT"] == [2.151281720651836]
     end 
 
-    @info "Closing db " dbname 
+    @info "Closing db "  
     SQLite.close(db)
 
-    @info "Deleting db"
-    rm(dbname)
 end
 
 @testset "Linear Regression" begin
 
-    dbname, _ = mktemp()
-
-    @info "Creating database: " dbname 
-    db = SQLite.DB(dbname)
+    @info "Creating database: "  
+    db = SQLite.DB()
 
     @info "Creating test table"
     SQLite.execute(db, "create table Numbers (x float, y float)")
@@ -254,10 +244,6 @@ end
         @test result[!, "MYRESULT"] == [0.0]
     end
 
-    @info "Closing db " dbname 
+    @info "Closing db" 
     SQLite.close(db)
-
-    @info "Deleting db"
-    rm(dbname)
-
 end
