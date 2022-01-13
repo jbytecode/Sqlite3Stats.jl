@@ -88,6 +88,15 @@ result = DBInterface.execute(db, "select LINSLOPE(x, y) from table") |> DataFram
 # Intercept (b) of linear regression y = b + ax
 result = DBInterface.execute(db, "select LININTERCEPT(x, y) from table") |> DataFrame 
 
+# Quantile of Normal Distribution with mean 0 and standard deviation 1
+result = DBInterface.execute(db, "select QNORM(1.96, 0.0, 1.0) from table") |> DataFrame 
+
+# Probability of Normal Distribution with mean 0 and standard deviation 1
+result = DBInterface.execute(db, "select PNORM(0.025, 0.0, 1.0) from table") |> DataFrame 
+
+# Random number drawn from a Normal Distribution with mean * and standard deviation 1
+result = DBInterface.execute(db, "select RNORM(0.0, 1.0) from table") |> DataFrame 
+
 ```
 
 
