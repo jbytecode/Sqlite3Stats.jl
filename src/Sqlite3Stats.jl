@@ -203,6 +203,13 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
     SQLite.register(db, (theta) -> rand(Distributions.Exponential(theta)), name = "REXP")
     
 
+    # qbeta, pbeta, rbeta
+    SQLite.register(db, (x, alpha, beta) -> Distributions.quantile(Distributions.Beta(alpha, beta), x), name = "QBETA")
+    
+    SQLite.register(db, (x, alpha, beta) -> Distributions.cdf(Distributions.Beta(alpha, beta), x), name = "PBETA")
+    
+    SQLite.register(db, (alpha, beta) -> rand(Distributions.Beta(alpha, beta)), name = "RBETA")
+    
     return nothing
 end
 

@@ -698,3 +698,53 @@ end
 
     SQLite.close(db)
 end
+
+
+
+
+
+@testset "Beta Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    @testset "PBETA" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PBETA(0.5, 0.12, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.92018, atol = tol)
+    end
+
+    @testset "QBETA" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select QBETA(0.5, 0.12, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.00310, atol = tol)
+    end
+
+    @testset "RBETA" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RBETA(0.12, 1.0) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] <= 1.0
+        @test result[!, "MYRESULT"][1] >= 0.0
+    end
+
+    SQLite.close(db)
+end

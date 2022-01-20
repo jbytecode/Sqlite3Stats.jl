@@ -1,3 +1,9 @@
+# 0.1.11
+- QBETA (quantile in Beta Distribution)
+- PBETA (probability in Beta Distribution)
+- RBETA (quantiles in Beta Distribution)
+  
+
 # 0.1.10
 - QEXP (quantile in Exponential Distribution)
 - PEXP (probability in Exponential Distribution)
