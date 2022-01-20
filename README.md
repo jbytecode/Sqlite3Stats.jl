@@ -116,6 +116,15 @@ result = DBInterface.execute(db, "select PCHISQ(0.025, 30) from table") |> DataF
 # Random number drawn from a Chisquare Distribution with degree of freedom 30
 result = DBInterface.execute(db, "select RCHISQ(30) from table") |> DataFrame 
 
+
+# Quantile of F Distribution with degrees of freedom 30 and 32
+result = DBInterface.execute(db, "select QF(1.96, 30, 32) from table") |> DataFrame 
+
+# Probability of F Distribution with degrees of freedom 30 and 32
+result = DBInterface.execute(db, "select PF(0.025, 30, 32) from table") |> DataFrame 
+
+# Random number drawn from a F Distribution with degrees of freedom 30 and 32
+result = DBInterface.execute(db, "select RF(30, 32) from table") |> DataFrame 
 ```
 
 
