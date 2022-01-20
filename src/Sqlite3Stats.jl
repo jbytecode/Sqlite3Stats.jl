@@ -152,9 +152,16 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
     # qt, pt, rt
     SQLite.register(db, (x, dof) -> Distributions.quantile(Distributions.TDist(dof), x), name = "QT")
     
-    SQLite.register(db, (x, dof) -> Distributions.pdf(Distributions.TDist(dof), x), name = "PT")
+    SQLite.register(db, (x, dof) -> Distributions.cdf(Distributions.TDist(dof), x), name = "PT")
     
     SQLite.register(db, (dof) -> rand(Distributions.TDist(dof)), name = "RT")
+
+    # qchisq, pchisq, rchisq
+    SQLite.register(db, (x, dof) -> Distributions.quantile(Distributions.Chisq(dof), x), name = "QCHISQ")
+    
+    SQLite.register(db, (x, dof) -> Distributions.cdf(Distributions.Chisq(dof), x), name = "PCHISQ")
+    
+    SQLite.register(db, (dof) -> rand(Distributions.Chisq(dof)), name = "RCHISQ")
     
     return nothing
 end

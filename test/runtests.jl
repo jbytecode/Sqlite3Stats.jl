@@ -6,10 +6,8 @@ using Sqlite3Stats.SQLite
 
 
 @testset "Functions" begin
-    @info "Creating database: "
     db = SQLite.DB()
 
-    @info "Creating test table"
     SQLite.execute(db, "create table Numbers (val float, otherval float)")
     x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     for v in x
@@ -17,9 +15,7 @@ using Sqlite3Stats.SQLite
         SQLite.execute(db, "insert into Numbers (val, otherval) values ($(v), $(y))")
     end
 
-    @info "DB Content:"
     result = DBInterface.execute(db, "select val, otherval from Numbers") |> DataFrame
-    @show result
 
     Sqlite3Stats.register_functions(db)
 
@@ -209,18 +205,13 @@ using Sqlite3Stats.SQLite
         @test result[!, "m"] == [33.0]
     end
 
-
-    @info "Closing db "
     SQLite.close(db)
 end
 
 
 @testset "Weighted Functions" begin
-
-    @info "Creating database: "
     db = SQLite.DB()
 
-    @info "Creating test table"
     SQLite.execute(db, "create table Numbers (val float, w float)")
     x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     w = [
@@ -241,9 +232,7 @@ end
         SQLite.execute(db, "insert into Numbers (val, w) values ($(v), $(y))")
     end
 
-    @info "DB Content:"
     result = DBInterface.execute(db, "select val, w from Numbers") |> DataFrame
-    @show result
 
     Sqlite3Stats.register_functions(db)
 
@@ -271,17 +260,14 @@ end
         @test result[!, "MYRESULT"] == [2.151281720651836]
     end
 
-    @info "Closing db "
     SQLite.close(db)
 
 end
 
 @testset "Linear Regression" begin
 
-    @info "Creating database: "
     db = SQLite.DB()
 
-    @info "Creating test table"
     SQLite.execute(db, "create table Numbers (x float, y float)")
     x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     y = 2.0 .* x
@@ -315,7 +301,6 @@ end
         @test result[!, "MYRESULT"] == [0.0]
     end
 
-    @info "Closing db"
     SQLite.close(db)
 end
 
@@ -374,7 +359,6 @@ end
         @test result[!, "MYRESULT"][1] > -10.0
     end
 
-    @info "Closing db"
     SQLite.close(db)
 
 end
@@ -402,7 +386,7 @@ end
                 db,
                 "select PT(1.9599639845400576,30) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"], [0.06112380516931853], atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.970326, atol = tol)
     end
 
     @testset "QT" begin
@@ -411,8 +395,7 @@ end
                 db,
                 "select QT(0.025, 30) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test result[!, "MYRESULT"][1] < 10.0
-        @test result[!, "MYRESULT"][1] > -10.0
+        @test isapprox(result[!, "MYRESULT"][1], -2.04227, atol = tol)
     end
 
     @testset "RT" begin
@@ -425,6 +408,52 @@ end
         @test result[!, "MYRESULT"][1] > -10.0
     end
 
-    @info "Closing db"
+    SQLite.close(db)
+end
+
+
+@testset "ChiSquare Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    @testset "PCHISQ" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PCHISQ(30, 30) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.534346, atol = tol)
+    end
+
+    @testset "QCHISQ" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select QCHISQ(0.05, 30) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 18.4927, atol = tol)
+    end
+
+    @testset "RCHISQ" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RCHISQ(30) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] < 100.0
+        @test result[!, "MYRESULT"][1] >= 0.0
+    end
+
     SQLite.close(db)
 end

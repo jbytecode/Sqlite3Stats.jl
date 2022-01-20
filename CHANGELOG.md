@@ -1,7 +1,13 @@
+# 0.1.5
+- QCHISQ (quantile in Chisquare Distribution)
+- PCHISQ (probability in Chisquare Distribution)
+- RCHISQ (quantiles in Chisquare Distribution)
+
+
 # 0.1.4
 - QT (quantile in Student's T Distribution)
 - PT (probability in Student's T Distribution)
-- RT (quantile in Student's T Distribution)
+- RT (quantiles in Student's T Distribution)
 
 
 # 0.1.3
