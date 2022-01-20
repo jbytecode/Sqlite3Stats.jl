@@ -1,3 +1,9 @@
+# 0.1.9
+- QUNIF (quantile in Uniform Distribution)
+- PUNIF (probability in Uniform Distribution)
+- RUNIF (quantiles in Uniform Distribution)
+  
+
 # 0.1.8
 - QBINOM (quantile in Binomial Distribution)
 - PBINOM (probability in Binomial Distribution)

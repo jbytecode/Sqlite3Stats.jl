@@ -600,3 +600,52 @@ end
 
     SQLite.close(db)
 end
+
+
+
+
+@testset "Uniform Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    @testset "PUNIF" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PUNIF(5, 0, 10) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol = tol)
+    end
+
+    @testset "QUNIF" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select QUNIF(0.5, 5, 10) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 7.5, atol = tol)
+    end
+
+    @testset "RUNIF" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RUNIF(0, 10) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] <= 10.0
+        @test result[!, "MYRESULT"][1] >= 0.0
+    end
+
+    SQLite.close(db)
+end

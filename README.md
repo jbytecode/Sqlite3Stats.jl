@@ -145,6 +145,16 @@ result = DBInterface.execute(db, "select PBINOM(5, 10, 0.5) from table") |> Data
 
 # Random number drawn from a Binomial Distribution with = 10 and p = 0.5 
 result = DBInterface.execute(db, "select RPOIS(10, 0.5) from table") |> DataFrame 
+
+
+# Quantile of Uniform Distribution with a = 0, b = 10
+result = DBInterface.execute(db, "select QUNIF(0.05, 0, 10) from table") |> DataFrame 
+
+# Probability of Uniform Distribution with a = 0, b = 0 
+result = DBInterface.execute(db, "select PUNIF(5, 0, 10) from table") |> DataFrame 
+
+# Random number drawn from a Uniform Distribution with  a = 0 and b = 10 
+result = DBInterface.execute(db, "select RUNIF(0, 10) from table") |> DataFrame 
 ```
 
 

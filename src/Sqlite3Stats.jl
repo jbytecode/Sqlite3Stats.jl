@@ -185,6 +185,14 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
     SQLite.register(db, (x, n, p) -> Distributions.cdf(Distributions.Binomial(n, p), x), name = "PBINOM")
     
     SQLite.register(db, (n, p) -> rand(Distributions.Binomial(n, p)), name = "RBINOM")
+
+
+    # qrunif, prunif, runif
+    SQLite.register(db, (x, a, b) -> Distributions.quantile(Distributions.Uniform(a, b), x), name = "QUNIF")
+    
+    SQLite.register(db, (x, a, b) -> Distributions.cdf(Distributions.Uniform(a, b), x), name = "PUNIF")
+    
+    SQLite.register(db, (a, b) -> rand(Distributions.Uniform(a, b)), name = "RUNIF")
     
     return nothing
 end
