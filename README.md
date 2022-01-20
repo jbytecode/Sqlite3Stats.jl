@@ -135,6 +135,16 @@ result = DBInterface.execute(db, "select PPOIS(3, 5) from table") |> DataFrame
 
 # Random number drawn from a Poisson Distribution with mean (lambda) 5
 result = DBInterface.execute(db, "select RPOIS(5) from table") |> DataFrame 
+
+
+# Quantile of Binomial Distribution with n = 10 and p = 0.5 
+result = DBInterface.execute(db, "select QBINOM(0.05, 10, 0.5) from table") |> DataFrame 
+
+# Probability of Binomial Distribution with n = 10 and p = 0.5 
+result = DBInterface.execute(db, "select PBINOM(5, 10, 0.5) from table") |> DataFrame 
+
+# Random number drawn from a Binomial Distribution with = 10 and p = 0.5 
+result = DBInterface.execute(db, "select RPOIS(10, 0.5) from table") |> DataFrame 
 ```
 
 

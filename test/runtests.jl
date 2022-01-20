@@ -553,3 +553,50 @@ end
 
     SQLite.close(db)
 end
+
+
+@testset "Binomial Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    @testset "PBINOM" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PBINOM(5, 10, 0.5) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.62304687, atol = tol)
+    end
+
+    @testset "QBINOM" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select QBINOM(0.50, 10, 0.5) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 5.0, atol = tol)
+    end
+
+    @testset "RBINOM" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RBINOM(10, 0.5) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] <= 10.0
+        @test result[!, "MYRESULT"][1] >= 0.0
+    end
+
+    SQLite.close(db)
+end

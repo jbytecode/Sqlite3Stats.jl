@@ -178,6 +178,14 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
     
     SQLite.register(db, (lambda) -> rand(Distributions.Poisson(lambda)), name = "RPOIS")
     
+
+    # qbinom, pbinom, rbinom
+    SQLite.register(db, (x, n, p) -> Distributions.quantile(Distributions.Binomial(n, p), x), name = "QBINOM")
+    
+    SQLite.register(db, (x, n, p) -> Distributions.cdf(Distributions.Binomial(n, p), x), name = "PBINOM")
+    
+    SQLite.register(db, (n, p) -> rand(Distributions.Binomial(n, p)), name = "RBINOM")
+    
     return nothing
 end
 
