@@ -1,3 +1,9 @@
+# 0.1.4
+- QT (quantile in Student's T Distribution)
+- PT (probability in Student's T Distribution)
+- RT (quantile in Student's T Distribution)
+
+
 # 0.1.3
 - Added Distributions as a dependency
 - QNORM

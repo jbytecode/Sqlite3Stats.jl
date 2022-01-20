@@ -97,6 +97,17 @@ result = DBInterface.execute(db, "select PNORM(0.025, 0.0, 1.0) from table") |> 
 # Random number drawn from a Normal Distribution with mean * and standard deviation 1
 result = DBInterface.execute(db, "select RNORM(0.0, 1.0) from table") |> DataFrame 
 
+# Quantile of Student's T Distribution with degree of freedom 30
+result = DBInterface.execute(db, "select QT(1.96, 30) from table") |> DataFrame 
+
+# Probability of Student's T Distribution with degree of freedom 30
+result = DBInterface.execute(db, "select PT(0.025, 30) from table") |> DataFrame 
+
+# Random number drawn from a Student's T Distribution with degree of freedom 30
+result = DBInterface.execute(db, "select RT(30) from table") |> DataFrame 
+
+
+
 ```
 
 

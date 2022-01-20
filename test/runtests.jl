@@ -374,4 +374,57 @@ end
         @test result[!, "MYRESULT"][1] > -10.0
     end
 
+    @info "Closing db"
+    SQLite.close(db)
+
+end
+
+
+
+@testset "T Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    @testset "PT" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PT(1.9599639845400576,30) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"], [0.06112380516931853], atol = tol)
+    end
+
+    @testset "QT" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select QT(0.025, 30) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] < 10.0
+        @test result[!, "MYRESULT"][1] > -10.0
+    end
+
+    @testset "RT" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RT(30) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] < 30.0
+        @test result[!, "MYRESULT"][1] > -10.0
+    end
+
+    @info "Closing db"
+    SQLite.close(db)
 end

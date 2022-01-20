@@ -142,11 +142,19 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
         x -> linear_regression(x[:,1], x[:,2])[1], 
         name = "LININTERCEPT", nargs = 2)
 
+    # qnorm, pnorm, rnorm
     SQLite.register(db, (x, mu, sd) -> Distributions.quantile(Distributions.Normal(mu, sd), x), name = "QNORM")
     
     SQLite.register(db, (x, mu, sd) -> Distributions.pdf(Distributions.Normal(mu, sd), x), name = "PNORM")
     
     SQLite.register(db, (mu, sd) -> rand(Distributions.Normal(mu, sd)), name = "RNORM")
+    
+    # qt, pt, rt
+    SQLite.register(db, (x, dof) -> Distributions.quantile(Distributions.TDist(dof), x), name = "QT")
+    
+    SQLite.register(db, (x, dof) -> Distributions.pdf(Distributions.TDist(dof), x), name = "PT")
+    
+    SQLite.register(db, (dof) -> rand(Distributions.TDist(dof)), name = "RT")
     
     return nothing
 end
