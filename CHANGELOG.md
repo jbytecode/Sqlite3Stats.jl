@@ -1,3 +1,9 @@
+# 0.1.10
+- QEXP (quantile in Exponential Distribution)
+- PEXP (probability in Exponential Distribution)
+- REXP (quantiles in Exponential Distribution)
+
+
 # 0.1.9
 - QUNIF (quantile in Uniform Distribution)
 - PUNIF (probability in Uniform Distribution)

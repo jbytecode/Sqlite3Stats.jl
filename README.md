@@ -155,6 +155,16 @@ result = DBInterface.execute(db, "select PUNIF(5, 0, 10) from table") |> DataFra
 
 # Random number drawn from a Uniform Distribution with  a = 0 and b = 10 
 result = DBInterface.execute(db, "select RUNIF(0, 10) from table") |> DataFrame 
+
+
+# Quantile of Exponential Distribution with lambda = 10
+result = DBInterface.execute(db, "select QEXP(0.05, 10) from table") |> DataFrame 
+
+# Probability of Exponential Distribution with lambda = 10 
+result = DBInterface.execute(db, "select PEXP(5, 10) from table") |> DataFrame 
+
+# Random number drawn from a Exponential Distribution with lambda = 10
+result = DBInterface.execute(db, "select RUNIF(10) from table") |> DataFrame 
 ```
 
 

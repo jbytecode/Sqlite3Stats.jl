@@ -649,3 +649,52 @@ end
 
     SQLite.close(db)
 end
+
+
+
+
+@testset "Exponential Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    @testset "PEXP" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PEXP(5, 10) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.39346934, atol = tol)
+    end
+
+    @testset "QEXP" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select QEXP(0.5, 10) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 6.93147180, atol = tol)
+    end
+
+    @testset "REXP" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select REXP(10.0) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] <= 100.0
+        @test result[!, "MYRESULT"][1] >= 0.0
+    end
+
+    SQLite.close(db)
+end

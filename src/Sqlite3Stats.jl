@@ -194,6 +194,15 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
     
     SQLite.register(db, (a, b) -> rand(Distributions.Uniform(a, b)), name = "RUNIF")
     
+
+    # qexp, pexp, rexp
+    SQLite.register(db, (x, theta) -> Distributions.quantile(Distributions.Exponential(theta), x), name = "QEXP")
+    
+    SQLite.register(db, (x, theta) -> Distributions.cdf(Distributions.Exponential(theta), x), name = "PEXP")
+    
+    SQLite.register(db, (theta) -> rand(Distributions.Exponential(theta)), name = "REXP")
+    
+
     return nothing
 end
 
