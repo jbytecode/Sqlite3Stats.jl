@@ -1,3 +1,9 @@
+# 0.1.6
+- QF (quantile in F Distribution)
+- PF (probability in F Distribution)
+- RF (quantiles in F Distribution)
+
+
 # 0.1.5
 - QCHISQ (quantile in Chisquare Distribution)
 - PCHISQ (probability in Chisquare Distribution)
