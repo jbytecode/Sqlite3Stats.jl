@@ -171,6 +171,13 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
     SQLite.register(db, (dof1, dof2) -> rand(Distributions.FDist(dof1, dof2)), name = "RF")
     
 
+    # qpois, ppois, rpois
+    SQLite.register(db, (x, lambda) -> Distributions.quantile(Distributions.Poisson(lambda), x), name = "QPOIS")
+    
+    SQLite.register(db, (x, lambda) -> Distributions.cdf(Distributions.Poisson(lambda), x), name = "PPOIS")
+    
+    SQLite.register(db, (lambda) -> rand(Distributions.Poisson(lambda)), name = "RPOIS")
+    
     return nothing
 end
 

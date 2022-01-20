@@ -118,13 +118,23 @@ result = DBInterface.execute(db, "select RCHISQ(30) from table") |> DataFrame
 
 
 # Quantile of F Distribution with degrees of freedom 30 and 32
-result = DBInterface.execute(db, "select QF(1.96, 30, 32) from table") |> DataFrame 
+result = DBInterface.execute(db, "select QF(0.025, 30, 32) from table") |> DataFrame 
 
 # Probability of F Distribution with degrees of freedom 30 and 32
-result = DBInterface.execute(db, "select PF(0.025, 30, 32) from table") |> DataFrame 
+result = DBInterface.execute(db, "select PF(5, 30, 32) from table") |> DataFrame 
 
 # Random number drawn from a F Distribution with degrees of freedom 30 and 32
 result = DBInterface.execute(db, "select RF(30, 32) from table") |> DataFrame 
+
+
+# Quantile of Poisson Distribution with mean (lambda) 5
+result = DBInterface.execute(db, "select QPOIS(0.05, 5) from table") |> DataFrame 
+
+# Probability of Poisson Distribution with mean (lambda) 5
+result = DBInterface.execute(db, "select PPOIS(3, 5) from table") |> DataFrame 
+
+# Random number drawn from a Poisson Distribution with mean (lambda) 5
+result = DBInterface.execute(db, "select RPOIS(5) from table") |> DataFrame 
 ```
 
 

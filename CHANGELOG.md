@@ -1,3 +1,8 @@
+# 0.1.7
+- QPOIS (quantile in Poisson Distribution)
+- PPOIS (probability in Poisson Distribution)
+- RPOIS (quantiles in Poisson Distribution)
+- 
 # 0.1.6
 - QF (quantile in F Distribution)
 - PF (probability in F Distribution)
