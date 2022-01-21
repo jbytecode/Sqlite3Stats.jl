@@ -175,6 +175,15 @@ result = DBInterface.execute(db, "select PBETA(5, 10, 20) from table") |> DataFr
 
 # Random number drawn from a Beta Distribution with a = 10 and b = 20
 result = DBInterface.execute(db, "select RBETA(10, 20) from table") |> DataFrame 
+
+# Quantile of Cauchy Distribution with location 10, scale 20
+result = DBInterface.execute(db, "select QCAUCHY(0.05, 10, 20) from table") |> DataFrame 
+
+# Probability of Cauchy Distribution with with location 10, scale 20
+result = DBInterface.execute(db, "select PCAUCHY(5, 10, 20) from table") |> DataFrame 
+
+# Random number drawn from a Cauchy Distribution with location 10, scale 20
+result = DBInterface.execute(db, "select RCAUCHY(10, 20) from table") |> DataFrame 
 ```
 
 

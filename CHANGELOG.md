@@ -1,3 +1,9 @@
+# 0.1.12
+- QCAUCHY (quantile in Cauchy Distribution)
+- PCAUCHY (probability in Cauchy Distribution)
+- RCAUCHY (quantiles in Cauchy Distribution)
+  
+
 # 0.1.11
 - QBETA (quantile in Beta Distribution)
 - PBETA (probability in Beta Distribution)

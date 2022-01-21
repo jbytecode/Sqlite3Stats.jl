@@ -748,3 +748,52 @@ end
 
     SQLite.close(db)
 end
+
+
+
+
+@testset "Cauchy Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    @testset "PCAUCHY" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PCAUCHY(0, 0, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol = tol)
+    end
+
+    @testset "QCAUCHY" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select QCAUCHY(0.05, 0, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], -6.313751, atol = tol)
+    end
+
+    @testset "RCAUCHY" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RCAUCHY(0, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] isa Number
+        @test result[!, "MYRESULT"][1] isa Number
+    end
+
+    SQLite.close(db)
+end

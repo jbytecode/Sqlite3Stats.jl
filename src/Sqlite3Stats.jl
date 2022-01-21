@@ -210,6 +210,14 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
     
     SQLite.register(db, (alpha, beta) -> rand(Distributions.Beta(alpha, beta)), name = "RBETA")
     
+
+    # qcauchy, pcauchy, rcauchy
+    SQLite.register(db, (x, mu, sigma) -> Distributions.quantile(Distributions.Cauchy(mu, sigma), x), name = "QCAUCHY")
+    
+    SQLite.register(db, (x, mu, sigma) -> Distributions.cdf(Distributions.Cauchy(mu, sigma), x), name = "PCAUCHY")
+    
+    SQLite.register(db, (mu, sigma) -> rand(Distributions.Cauchy(mu, sigma)), name = "RCAUCHY")
+    
     return nothing
 end
 
