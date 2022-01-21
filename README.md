@@ -164,7 +164,7 @@ result = DBInterface.execute(db, "select QEXP(0.05, 10) from table") |> DataFram
 result = DBInterface.execute(db, "select PEXP(5, 10) from table") |> DataFrame 
 
 # Random number drawn from a Exponential Distribution with lambda = 10
-result = DBInterface.execute(db, "select RUNIF(10) from table") |> DataFrame 
+result = DBInterface.execute(db, "select REXP(10) from table") |> DataFrame 
 
 
 # Quantile of Beta Distribution with a = 10 and b = 20
