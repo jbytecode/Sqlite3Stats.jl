@@ -1,4 +1,8 @@
-# 0.1.0
+# v0.1.1 
+- Macro definitions for array and matrix initialization
+- Logging system
+
+# v0.1.0
 - QCAUCHY (quantile in Cauchy Distribution)
 - PCAUCHY (probability in Cauchy Distribution)
 - RCAUCHY (quantiles in Cauchy Distribution)
@@ -33,6 +37,6 @@
 - LINSLOPE and LININTERCEPT for linear regression y = intercept + slope x
 - Initial package
 - Quartiles, mean, median, etc.
-- - Weighted versions of mean and median
+- Weighted versions of mean and median
 - QUARTILE 
 - ENTROPY 
