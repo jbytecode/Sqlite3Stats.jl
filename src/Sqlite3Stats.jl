@@ -249,6 +249,13 @@ function register_functions(db::SQLite.DB; verbose::Bool = false)::Nothing
     
     SQLite.register(db, (mu, sigma) -> rand(Distributions.Cauchy(mu, sigma)), name = "RCAUCHY")
 
+    # qgamma, pgamma, rgamma
+    SQLite.register(db, (x, alpha, theta) -> Distributions.quantile(Distributions.Gamma(alpha, theta), x), name = "QGAMMA")
+    
+    SQLite.register(db, (x, alpha, theta) -> Distributions.cdf(Distributions.Gamma(alpha, theta), x), name = "PGAMMA")
+    
+    SQLite.register(db, (alpha, theta) -> rand(Distributions.Gamma(alpha, theta)), name = "RGAMMA")
+
     @info "Setting old logger as global"
     Logging.global_logger(old_logger)
 

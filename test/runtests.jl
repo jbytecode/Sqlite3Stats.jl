@@ -792,7 +792,53 @@ end
                 "select RCAUCHY(0, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
         @test result[!, "MYRESULT"][1] isa Number
+    end
+
+    SQLite.close(db)
+end
+
+
+@testset "Gamma Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    @testset "PGAMMA" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PGAMMA(0.75, 0.5, 1.0) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.7793286380801532, atol = tol)
+    end
+
+    @testset "QGAMMA" begin
+        result =
+            DBInterface.execute(
+                db,
+            "select QGAMMA(0.05, 0.5, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.0019660700000097625, atol = tol)
+    end
+
+    @testset "RGAMMA" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RGAMMA(0.5, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
         @test result[!, "MYRESULT"][1] isa Number
+        @test result[!, "MYRESULT"][1] <= 15.0
     end
 
     SQLite.close(db)

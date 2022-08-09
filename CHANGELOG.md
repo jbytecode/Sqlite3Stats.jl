@@ -1,3 +1,6 @@
+# v0.1.2 (upcoming)
+- QGAMMA, PGAMMA, and RGAMMA implemented for Gamma Distribution
+
 # v0.1.1 
 - Macro definitions for array and matrix initialization
 - Logging system
