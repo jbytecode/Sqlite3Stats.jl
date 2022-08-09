@@ -3,10 +3,14 @@ module Sqlite3Stats
 import Distributions
 import StatsBase
 import SQLite
+import Logging
 
 export StatsBase
 export SQLite
 export Distributions
+
+export register_functions
+
 
 function linear_regression(x::Array{Float64, 1}, y::Array{Float64, 1})::Array{Float64, 1}
     meanx = StatsBase.mean(x)
@@ -16,132 +20,159 @@ function linear_regression(x::Array{Float64, 1}, y::Array{Float64, 1})::Array{Fl
     return [beta0, beta1]
 end
 
+macro F64Vector()
+    Array{Float64, 1}(undef, 0)
+end
 
-function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
+macro F64Matrix2()
+    Array{Float64, 2}(undef, (0, 2))
+end 
 
-    SQLite.register(db, [], 
+function register_functions(db::SQLite.DB; verbose::Bool = false)::Nothing
+
+    # Saving the original logger and creating a local one
+    # if verbose == true then the minimum level is Debug
+    # so no output will be visible at runtime
+    old_logger = Logging.global_logger()
+    if verbose
+        logger = Logging.ConsoleLogger(stdout, Logging.Info) 
+    else
+        logger = Logging.NullLogger()
+    end
+    Logging.global_logger(logger)
+
+
+    @info "Registering Quantiles"
+    SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.25), 
         name = "Q1")
 
-    SQLite.register(db, [], 
+    SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.50), 
         name = "Q2")
 
-    SQLite.register(db, [], 
+    SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.50), 
         name = "MEDIAN")
 
-    SQLite.register(db, [], 
+    SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.75), 
         name = "Q3")
 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.quantile(x[:,1], x[1,2]), 
         name = "QUANTILE", nargs = 2)    
 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    @info "Registering covariance and correlation"
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.cov(x[:,1], x[:,2]), 
         name = "COV", nargs = 2)
 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.cor(x[:,1], x[:,2]), 
         name = "COR", nargs = 2)
 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.corspearman(x[:,1], x[:,2]), 
         name = "CORSPEARMAN", nargs = 2)
     
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.corkendall(x[:,1], x[:,2]), 
         name = "CORKENDALL", nargs = 2)
 
+    @info "Registering location and scale functions"
+    SQLite.register(db, @F64Vector, 
+        (x,y) -> vcat(x, y), 
+        x -> StatsBase.geomean(x), 
+        name = "GEOMEAN")
+
+    SQLite.register(db, @F64Vector, 
+        (x,y) -> vcat(x, y), 
+        x -> StatsBase.harmmean(x), 
+        name = "HARMMEAN")
+
+    SQLite.register(db, @F64Vector, 
+        (x,y) -> vcat(x, y), 
+        x -> StatsBase.mode(x), 
+        name = "MODE")
+
+
     # Maximum absolute deviations 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.maxad(x[:,1], x[:,2]), 
         name = "MAXAD", nargs = 2)
 
     # Mean absolute deviations 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.meanad(x[:,1], x[:,2]), 
         name = "MEANAD", nargs = 2)
 
     # Mean squared deviations 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.msd(x[:,1], x[:,2]), 
         name = "MSD", nargs = 2)
 
-    SQLite.register(db, [], 
+    SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
-        x -> StatsBase.mad(convert(Array{Float64, 1}, x)), 
+        x -> StatsBase.mad(x, normalize = true), 
         name = "MAD")
 
-    SQLite.register(db, [], 
+    SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
-        x -> StatsBase.iqr(convert(Array{Float64, 1}, x)), 
+        x -> StatsBase.iqr(x), 
         name = "IQR")
 
-    SQLite.register(db, [], 
+    @info "Registering moments"
+    SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
-        x -> StatsBase.skewness(convert(Array{Float64, 1}, x)), 
+        x -> StatsBase.skewness(x), 
         name = "SKEWNESS")
 
-    SQLite.register(db, [], 
+    SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
-        x -> StatsBase.kurtosis(convert(Array{Float64, 1}, x)), 
+        x -> StatsBase.kurtosis(x), 
         name = "KURTOSIS")
     
-    SQLite.register(db, [], 
-        (x,y) -> vcat(x, y), 
-        x -> StatsBase.geomean(convert(Array{Float64, 1}, x)), 
-        name = "GEOMEAN")
-
-    SQLite.register(db, [], 
-        (x,y) -> vcat(x, y), 
-        x -> StatsBase.harmmean(convert(Array{Float64, 1}, x)), 
-        name = "HARMMEAN")
-
-    SQLite.register(db, [], 
-        (x,y) -> vcat(x, y), 
-        x -> StatsBase.mode(convert(Array{Float64, 1}, x)), 
-        name = "MODE")
-
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    @info "Registering weighted functions"
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.mean(x[:,1], StatsBase.weights(x[:,2])), 
         name = "WMEAN", nargs = 2)
 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.median(x[:,1], StatsBase.weights(x[:,2])), 
         name = "WMEDIAN", nargs = 2)
 
-    SQLite.register(db, [], 
+    SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
-        x -> StatsBase.entropy(convert(Array{Float64, 1}, x)), 
+        x -> StatsBase.entropy(x), 
         name = "ENTROPY")
 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    @info "Ordinary least squares"
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> linear_regression(x[:,1], x[:,2])[2], 
         name = "LINSLOPE", nargs = 2)
 
-    SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
+    SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> linear_regression(x[:,1], x[:,2])[1], 
         name = "LININTERCEPT", nargs = 2)
 
+    @info "Registering R like dx(), px(), qx(), rx() distribution functions"
     # qnorm, pnorm, rnorm
     SQLite.register(db, (x, mu, sd) -> Distributions.quantile(Distributions.Normal(mu, sd), x), name = "QNORM")
     
@@ -217,11 +248,12 @@ function register_functions(db::SQLite.DB; verbose::Bool = true)::Nothing
     SQLite.register(db, (x, mu, sigma) -> Distributions.cdf(Distributions.Cauchy(mu, sigma), x), name = "PCAUCHY")
     
     SQLite.register(db, (mu, sigma) -> rand(Distributions.Cauchy(mu, sigma)), name = "RCAUCHY")
-    
+
+    @info "Setting old logger as global"
+    Logging.global_logger(old_logger)
+
     return nothing
 end
 
-
-export register_functions
 
 end # module
