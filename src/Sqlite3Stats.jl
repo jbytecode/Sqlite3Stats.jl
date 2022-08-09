@@ -43,32 +43,40 @@ function register_functions(db::SQLite.DB; verbose::Bool = false)::Nothing
 
 
     @info "Registering Quantiles"
+    # First Quartile 
+    # or 0.25th Quartile
     SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.25), 
         name = "Q1")
 
+    # Second Quartiles or sample median
     SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.50), 
         name = "Q2")
 
+    # Sample median
     SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.50), 
         name = "MEDIAN")
 
+    # Third Quartile or 0.75th Quartile
     SQLite.register(db, @F64Vector, 
         (x,y) -> vcat(x, y), 
         x -> StatsBase.quantile(x, 0.75), 
         name = "Q3")
 
+    # QUANTILE(x, p)
+    # where 0 <= p <= 1
     SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.quantile(x[:,1], x[1,2]), 
         name = "QUANTILE", nargs = 2)    
 
     @info "Registering covariance and correlation"
+    # COVARIANCE(x, y)
     SQLite.register(db, @F64Matrix2, 
         (x, a, b) -> vcat(x, [a, b]'), 
         x -> StatsBase.cov(x[:,1], x[:,2]), 
@@ -255,6 +263,14 @@ function register_functions(db::SQLite.DB; verbose::Bool = false)::Nothing
     SQLite.register(db, (x, alpha, theta) -> Distributions.cdf(Distributions.Gamma(alpha, theta), x), name = "PGAMMA")
     
     SQLite.register(db, (alpha, theta) -> rand(Distributions.Gamma(alpha, theta)), name = "RGAMMA")
+
+    # qfrechet, pfrechet, rfrechet
+    SQLite.register(db, (x, alpha) -> Distributions.quantile(Distributions.Frechet(alpha), x), name = "QFRECHET")
+
+    SQLite.register(db, (x, alpha) -> Distributions.cdf(Distributions.Frechet(alpha), x), name = "PFRECHET")
+
+    SQLite.register(db, (alpha) -> rand(Distributions.Frechet(alpha)), name = "RFRECHET")
+
 
     @info "Setting old logger as global"
     Logging.global_logger(old_logger)

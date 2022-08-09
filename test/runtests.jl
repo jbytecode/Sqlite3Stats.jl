@@ -843,3 +843,52 @@ end
 
     SQLite.close(db)
 end
+
+
+@testset "Frechet Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    # alpha = 3
+    # x = 0.5
+    @testset "PFRECHET" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PFRECHET(1.1299472763373901, 3) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol = tol)
+    end
+
+    @testset "QFRECHET" begin
+        result =
+            DBInterface.execute(
+                db,
+            "select QFRECHET(0.5, 3) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 1.1299472763373901, atol = tol)
+    end
+
+    @testset "RFRECHET" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RFRECHET(3) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] isa Number
+        @test result[!, "MYRESULT"][1] >= 0.0
+    end
+
+    SQLite.close(db)
+end
