@@ -1,4 +1,4 @@
-# v0.1.3 (Upcoming release)
+# v0.1.3
 - QWEIBULL, PWEIBULL, and RWEIBULL implemented for Weibull Distribution
 - Registering functions are refactored
 
