@@ -895,7 +895,6 @@ end
 
 
 
-
 @testset "Pareto Distribution" begin
 
     tol = 0.001
@@ -928,7 +927,7 @@ end
                 db,
             "select QPARETO(0.5, 1, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1],2, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 2, atol = tol)
     end
 
     @testset "RPARETO" begin
@@ -943,3 +942,57 @@ end
 
     SQLite.close(db)
 end
+
+
+
+@testset "Weibull Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    # alpha = 3
+    # x = 0.5
+    @testset "PWEIBULL" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PWEIBULL(1, 1, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.6321205588285577, atol = tol)
+    end
+
+    @testset "QWEIBULL" begin
+        result =
+            DBInterface.execute(
+                db,
+            "select QWEIBULL(0.6321205588285577, 1, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 1.0, atol = tol)
+    end
+
+    @testset "RWEIBULL" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RWEIBULL(1, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] isa Number
+        @test result[!, "MYRESULT"][1] >= 0.0
+    end
+
+    SQLite.close(db)
+end
+
+
+
+

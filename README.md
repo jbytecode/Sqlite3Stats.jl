@@ -223,6 +223,7 @@ Note that Q, P, and R prefix correspond to Quantile, CDF (Probability), and Rand
 - `QGAMMA(x, alpha, theta)`, `PGAMMA(x, alpha, theta)`, `RGAMMA(alpha, theta)`
 - `QFRECHET(x, alpha)`, `PFRECHET(x, alpha)`, `RFRECHET(alpha)`
 - `QPARETO(x, alpha, theta)`, `PPARETO(x, alpha, theta)`, `RPARETO(alpha, theta)`
+- `QWEIBULL(x, alpha, theta)`, `PWEIBULL(x, alpha, theta)`, `RWEIBULL(alpha, theta)`
 
 # The Logic
 

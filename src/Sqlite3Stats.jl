@@ -278,6 +278,13 @@ function register_functions(db::SQLite.DB; verbose::Bool = false)::Nothing
 
     SQLite.register(db, (alpha, theta) -> rand(Distributions.Pareto(alpha, theta)), name = "RPARETO")
 
+    # qweibull, pweibull, rweibull
+    SQLite.register(db, (x, alpha, theta) -> Distributions.quantile(Distributions.Weibull(alpha, theta), x), name = "QWEIBULL")
+
+    SQLite.register(db, (x, alpha, theta) -> Distributions.cdf(Distributions.Weibull(alpha, theta), x), name = "PWEIBULL")
+
+    SQLite.register(db, (alpha, theta) -> rand(Distributions.Weibull(alpha, theta)), name = "RWEIBULL")
+
     @info "Setting old logger as global"
     Logging.global_logger(old_logger)
 
