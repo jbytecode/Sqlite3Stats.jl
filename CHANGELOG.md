@@ -1,7 +1,10 @@
-# v0.1.2 (upcoming)
+# v0.1.3 (Upcoming release)
+
+
+# v0.1.2
 - QGAMMA, PGAMMA, and RGAMMA implemented for Gamma Distribution
 - QFRECHET, PQFRECHET, RQFRECHET implemented for Frechet Distribution
-
+- QPARETO, PPARETO, RPARETO implemented for Pareto Distribution
 
 # v0.1.1 
 - Macro definitions for array and matrix initialization

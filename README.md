@@ -217,6 +217,12 @@ result = DBInterface.execute(db, "select PCAUCHY(5, 10, 20) from table") |> Data
 result = DBInterface.execute(db, "select RCAUCHY(10, 20) from table") |> DataFrame 
 ```
 
+# Other functions
+Note that Q, P, and R prefix correspond to Quantile, CDF (Probability), and Random (number), respectively.
+
+- `QGAMMA(x, alpha, theta)`, `PGAMMA(x, alpha, theta)`, `RGAMMA(alpha, theta)`
+- `QFRECHET(x, alpha)`, `PFRECHET(x, alpha)`, `RFRECHET(alpha)`
+- `QPARETO(x, alpha, theta)`, `PPARETO(x, alpha, theta)`, `RPARETO(alpha, theta)`
 
 # The Logic
 

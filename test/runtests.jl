@@ -892,3 +892,54 @@ end
 
     SQLite.close(db)
 end
+
+
+
+
+@testset "Pareto Distribution" begin
+
+    tol = 0.001
+
+    db = SQLite.DB()
+
+    Sqlite3Stats.register_functions(db)
+
+    SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
+    for i = 1:10
+        a = rand()
+        b = rand() * 10
+        SQLite.execute(db, "insert into numbers(num1, num2) values ($a, $b)")
+    end
+
+    # alpha = 3
+    # x = 0.5
+    @testset "PPARETO" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select PPARETO(2, 1, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol = tol)
+    end
+
+    @testset "QPARETO" begin
+        result =
+            DBInterface.execute(
+                db,
+            "select QPARETO(0.5, 1, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test isapprox(result[!, "MYRESULT"][1],2, atol = tol)
+    end
+
+    @testset "RPARETO" begin
+        result =
+            DBInterface.execute(
+                db,
+                "select RPARETO(1, 1) as MYRESULT from numbers limit 1",
+            ) |> DataFrame
+        @test result[!, "MYRESULT"][1] isa Number
+        @test result[!, "MYRESULT"][1] >= 1.0
+    end
+
+    SQLite.close(db)
+end
