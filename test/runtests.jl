@@ -400,10 +400,8 @@ end
 
     @testset "RT" begin
         result =
-            DBInterface.execute(
-                db,
-                "select RT(30) as MYRESULT from numbers limit 1",
-            ) |> DataFrame
+            DBInterface.execute(db, "select RT(30) as MYRESULT from numbers limit 1") |>
+            DataFrame
         @test result[!, "MYRESULT"][1] < 30.0
         @test result[!, "MYRESULT"][1] > -10.0
     end
@@ -447,10 +445,8 @@ end
 
     @testset "RCHISQ" begin
         result =
-            DBInterface.execute(
-                db,
-                "select RCHISQ(30) as MYRESULT from numbers limit 1",
-            ) |> DataFrame
+            DBInterface.execute(db, "select RCHISQ(30) as MYRESULT from numbers limit 1") |>
+            DataFrame
         @test result[!, "MYRESULT"][1] < 100.0
         @test result[!, "MYRESULT"][1] >= 0.0
     end
@@ -496,10 +492,8 @@ end
 
     @testset "RF" begin
         result =
-            DBInterface.execute(
-                db,
-                "select RF(3, 5) as MYRESULT from numbers limit 1",
-            ) |> DataFrame
+            DBInterface.execute(db, "select RF(3, 5) as MYRESULT from numbers limit 1") |>
+            DataFrame
         @test result[!, "MYRESULT"][1] < 100.0
         @test result[!, "MYRESULT"][1] >= 0.0
     end
@@ -543,10 +537,8 @@ end
 
     @testset "RPOIS" begin
         result =
-            DBInterface.execute(
-                db,
-                "select RPOIS(5) as MYRESULT from numbers limit 1",
-            ) |> DataFrame
+            DBInterface.execute(db, "select RPOIS(5) as MYRESULT from numbers limit 1") |>
+            DataFrame
         @test result[!, "MYRESULT"][1] < 100.0
         @test result[!, "MYRESULT"][1] >= 0.0
     end
@@ -688,10 +680,8 @@ end
 
     @testset "REXP" begin
         result =
-            DBInterface.execute(
-                db,
-                "select REXP(10.0) as MYRESULT from numbers limit 1",
-            ) |> DataFrame
+            DBInterface.execute(db, "select REXP(10.0) as MYRESULT from numbers limit 1") |>
+            DataFrame
         @test result[!, "MYRESULT"][1] <= 100.0
         @test result[!, "MYRESULT"][1] >= 0.0
     end
@@ -826,7 +816,7 @@ end
         result =
             DBInterface.execute(
                 db,
-            "select QGAMMA(0.05, 0.5, 1) as MYRESULT from numbers limit 1",
+                "select QGAMMA(0.05, 0.5, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
         @test isapprox(result[!, "MYRESULT"][1], 0.0019660700000097625, atol = tol)
     end
@@ -875,7 +865,7 @@ end
         result =
             DBInterface.execute(
                 db,
-            "select QFRECHET(0.5, 3) as MYRESULT from numbers limit 1",
+                "select QFRECHET(0.5, 3) as MYRESULT from numbers limit 1",
             ) |> DataFrame
         @test isapprox(result[!, "MYRESULT"][1], 1.1299472763373901, atol = tol)
     end
@@ -925,7 +915,7 @@ end
         result =
             DBInterface.execute(
                 db,
-            "select QPARETO(0.5, 1, 1) as MYRESULT from numbers limit 1",
+                "select QPARETO(0.5, 1, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
         @test isapprox(result[!, "MYRESULT"][1], 2, atol = tol)
     end
@@ -975,7 +965,7 @@ end
         result =
             DBInterface.execute(
                 db,
-            "select QWEIBULL(0.6321205588285577, 1, 1) as MYRESULT from numbers limit 1",
+                "select QWEIBULL(0.6321205588285577, 1, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
         @test isapprox(result[!, "MYRESULT"][1], 1.0, atol = tol)
     end

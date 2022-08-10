@@ -1,5 +1,6 @@
 # v0.1.3 (Upcoming release)
 - QWEIBULL, PWEIBULL, and RWEIBULL implemented for Weibull Distribution
+- Registering functions are refactored
 
 # v0.1.2
 - QGAMMA, PGAMMA, and RGAMMA implemented for Gamma Distribution
