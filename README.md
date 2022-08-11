@@ -118,112 +118,54 @@ result = DBInterface.execute(db, "select LINSLOPE(x, y) from table") |> DataFram
 
 # Intercept (b) of linear regression y = b + ax
 result = DBInterface.execute(db, "select LININTERCEPT(x, y) from table") |> DataFrame 
+```
 
+# Well-known Probability Related Functions 
+This family of functions implement QXXX(), PXXX(), and RXXX() for a probability density or mass function XXX. Q for quantile, p for propability or cdf value, R for random number. 
+
+`QNORM(x, mean, stddev)` returns the quantile value 
+
+$$
+\int_{-\infin}^{?} f(x; \mu, \sigma)dx = x
+$$
+
+whereas 
+
+`PNORM(x, mean, stddev)` returns
+
+$$
+\int_{-\infin}^{x} f(x; \mu, \sigma)dx = ?
+$$
+
+and `RNORM(mean, stddev)` draws a random number from a Normal distribution with mean `mean` and standard deviation `stddev`.
+
+```julia
 # Quantile of Normal Distribution with mean 0 and standard deviation 1
-result = DBInterface.execute(db, "select QNORM(1.96, 0.0, 1.0) from table") |> DataFrame 
+result = DBInterface.execute(db, "select QNORM(0.025, 0.0, 1.0) from table") |> DataFrame 
 
 # Probability of Normal Distribution with mean 0 and standard deviation 1
-result = DBInterface.execute(db, "select PNORM(0.025, 0.0, 1.0) from table") |> DataFrame 
+result = DBInterface.execute(db, "select PNORM(-1.96, 0.0, 1.0) from table") |> DataFrame 
 
 # Random number drawn from a Normal Distribution with mean * and standard deviation 1
 result = DBInterface.execute(db, "select RNORM(0.0, 1.0) from table") |> DataFrame 
-
-# Quantile of Student's T Distribution with degree of freedom 30
-result = DBInterface.execute(db, "select QT(1.96, 30) from table") |> DataFrame 
-
-# Probability of Student's T Distribution with degree of freedom 30
-result = DBInterface.execute(db, "select PT(0.025, 30) from table") |> DataFrame 
-
-# Random number drawn from a Student's T Distribution with degree of freedom 30
-result = DBInterface.execute(db, "select RT(30) from table") |> DataFrame 
-
-
-# Quantile of Chisquare Distribution with degree of freedom 30
-result = DBInterface.execute(db, "select QCHISQ(1.96, 30) from table") |> DataFrame 
-
-# Probability of Chisquare Distribution with degree of freedom 30
-result = DBInterface.execute(db, "select PCHISQ(0.025, 30) from table") |> DataFrame 
-
-# Random number drawn from a Chisquare Distribution with degree of freedom 30
-result = DBInterface.execute(db, "select RCHISQ(30) from table") |> DataFrame 
-
-
-# Quantile of F Distribution with degrees of freedom 30 and 32
-result = DBInterface.execute(db, "select QF(0.025, 30, 32) from table") |> DataFrame 
-
-# Probability of F Distribution with degrees of freedom 30 and 32
-result = DBInterface.execute(db, "select PF(5, 30, 32) from table") |> DataFrame 
-
-# Random number drawn from a F Distribution with degrees of freedom 30 and 32
-result = DBInterface.execute(db, "select RF(30, 32) from table") |> DataFrame 
-
-
-# Quantile of Poisson Distribution with mean (lambda) 5
-result = DBInterface.execute(db, "select QPOIS(0.05, 5) from table") |> DataFrame 
-
-# Probability of Poisson Distribution with mean (lambda) 5
-result = DBInterface.execute(db, "select PPOIS(3, 5) from table") |> DataFrame 
-
-# Random number drawn from a Poisson Distribution with mean (lambda) 5
-result = DBInterface.execute(db, "select RPOIS(5) from table") |> DataFrame 
-
-
-# Quantile of Binomial Distribution with n = 10 and p = 0.5 
-result = DBInterface.execute(db, "select QBINOM(0.05, 10, 0.5) from table") |> DataFrame 
-
-# Probability of Binomial Distribution with n = 10 and p = 0.5 
-result = DBInterface.execute(db, "select PBINOM(5, 10, 0.5) from table") |> DataFrame 
-
-# Random number drawn from a Binomial Distribution with = 10 and p = 0.5 
-result = DBInterface.execute(db, "select RPOIS(10, 0.5) from table") |> DataFrame 
-
-
-# Quantile of Uniform Distribution with a = 0, b = 10
-result = DBInterface.execute(db, "select QUNIF(0.05, 0, 10) from table") |> DataFrame 
-
-# Probability of Uniform Distribution with a = 0, b = 0 
-result = DBInterface.execute(db, "select PUNIF(5, 0, 10) from table") |> DataFrame 
-
-# Random number drawn from a Uniform Distribution with  a = 0 and b = 10 
-result = DBInterface.execute(db, "select RUNIF(0, 10) from table") |> DataFrame 
-
-
-# Quantile of Exponential Distribution with lambda = 10
-result = DBInterface.execute(db, "select QEXP(0.05, 10) from table") |> DataFrame 
-
-# Probability of Exponential Distribution with lambda = 10 
-result = DBInterface.execute(db, "select PEXP(5, 10) from table") |> DataFrame 
-
-# Random number drawn from a Exponential Distribution with lambda = 10
-result = DBInterface.execute(db, "select REXP(10) from table") |> DataFrame 
-
-
-# Quantile of Beta Distribution with a = 10 and b = 20
-result = DBInterface.execute(db, "select QBETA(0.05, 10, 20) from table") |> DataFrame 
-
-# Probability of Beta Distribution with a = 10 and b = 20
-result = DBInterface.execute(db, "select PBETA(5, 10, 20) from table") |> DataFrame 
-
-# Random number drawn from a Beta Distribution with a = 10 and b = 20
-result = DBInterface.execute(db, "select RBETA(10, 20) from table") |> DataFrame 
-
-# Quantile of Cauchy Distribution with location 10, scale 20
-result = DBInterface.execute(db, "select QCAUCHY(0.05, 10, 20) from table") |> DataFrame 
-
-# Probability of Cauchy Distribution with with location 10, scale 20
-result = DBInterface.execute(db, "select PCAUCHY(5, 10, 20) from table") |> DataFrame 
-
-# Random number drawn from a Cauchy Distribution with location 10, scale 20
-result = DBInterface.execute(db, "select RCAUCHY(10, 20) from table") |> DataFrame 
 ```
 
 # Other functions for distributions
-Note that Q, P, and R prefix correspond to Quantile, CDF (Probability), and Random (number), respectively.
+Note that Q, P, and R prefix correspond to Quantile, CDF (Probability), and Random (number), respectively. 
 
-- `QGAMMA(x, alpha, theta)`, `PGAMMA(x, alpha, theta)`, `RGAMMA(alpha, theta)`
-- `QFRECHET(x, alpha)`, `PFRECHET(x, alpha)`, `RFRECHET(alpha)`
-- `QPARETO(x, alpha, theta)`, `PPARETO(x, alpha, theta)`, `RPARETO(alpha, theta)`
-- `QWEIBULL(x, alpha, theta)`, `PWEIBULL(x, alpha, theta)`, `RWEIBULL(alpha, theta)`
+- `QT(x, dof)`, `PT(x, dof)`, `RT(dof)` for Student-T Distribution
+- `QCHISQ(x, dof)`, `PCHISQ(x, dof)`, `RCHISQ(dof)` for ChiSquare Distribution 
+- `QF(x, dof1, dof2)`, `PF(x, dof1, dof2)`, `RF(dof1, dof2)` for F Distribution 
+- `QPOIS(x, lambda)`,`RPOIS(x, lambda)`, `RPOIS(lambda)` for Poisson Distribution 
+- `QBINOM(x, n, p)`, `PBINOM(x, n, p)`, `RBINOM(n, p)` for Binomial Distribution
+- `QUNIF(x, a, b)`, `PUNIF(x, a, b)`, `RUNIF(a, b)` for Uniform Distribution 
+- `QEXP(x, theta)`, `PEXP(x, theta)`, `REXP(theta)` for Exponential Distribution 
+- `QBETA(x, alpha, beta)`, `PGAMMA(x, alpha, beta)`, `RGAMMA(alpha, beta)` for Beta Distribution
+- `QCAUCHY(x, location, scale)`, `PCAUCHY(x, location, scale)`, `RCAUCHY(location, scale)` for Cauchy Distribution
+- `QGAMMA(x, alpha, theta)`, `PGAMMA(x, alpha, theta)`, `RGAMMA(alpha, theta)` for Gamma Distribution
+- `QFRECHET(x, alpha)`, `PFRECHET(x, alpha)`, `RFRECHET(alpha)` for Frechet Distribution
+- `QPARETO(x, alpha, theta)`, `PPARETO(x, alpha, theta)`, `RPARETO(alpha, theta)` for Pareto Distribution
+- `QWEIBULL(x, alpha, theta)`, `PWEIBULL(x, alpha, theta)`, `RWEIBULL(alpha, theta)` for Weibull Distribution
 
 
 # Hypothesis Tests
