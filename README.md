@@ -126,7 +126,7 @@ This family of functions implement QXXX(), PXXX(), and RXXX() for a probability 
 `QNORM(x, mean, stddev)` returns the quantile value 
 
 $$
-\int_{-\infin}^{?} f(x; \mu, \sigma)dx = x
+\int_{-\infty}^{?} f(x; \mu, \sigma)dx = x
 $$
 
 whereas 
@@ -134,7 +134,7 @@ whereas
 `PNORM(x, mean, stddev)` returns
 
 $$
-\int_{-\infin}^{x} f(x; \mu, \sigma)dx = ?
+\int_{-\infty}^{x} f(x; \mu, \sigma)dx = ?
 $$
 
 and `RNORM(mean, stddev)` draws a random number from a Normal distribution with mean `mean` and standard deviation `stddev`.
