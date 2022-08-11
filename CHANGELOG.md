@@ -1,3 +1,7 @@
+# v0.1.4 (Upcoming release)
+- Add HypothesisTests as dependency
+- Implement Jarque-Bera test for normality
+
 # v0.1.3
 - QWEIBULL, PWEIBULL, and RWEIBULL implemented for Weibull Distribution
 - Registering functions are refactored

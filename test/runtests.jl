@@ -4,7 +4,6 @@ using DataFrames
 using Sqlite3Stats.SQLite
 
 
-
 @testset "Functions" begin
     db = SQLite.DB()
 
@@ -986,3 +985,24 @@ end
 
 
 
+@testset "Hypothesis Tests" begin 
+
+    @testset "Jarque-Bera test for normality" begin 
+        db = SQLite.DB()
+
+    SQLite.execute(db, "create table Numbers (val float)")
+    x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+    
+    for i = 1:10
+        v = x[i]
+        SQLite.execute(db, "insert into Numbers (val) values ($(v))")
+    end
+
+    Sqlite3Stats.register_functions(db)
+
+    result = DBInterface.execute(db, "select JB(val) as myjb from Numbers") |> DataFrame
+
+    @test result[!, "myjb"] == [0.7318032036735493]
+
+    end 
+end 

@@ -2,6 +2,7 @@ module Sqlite3Stats
 
 import Distributions
 import StatsBase
+import HypothesisTests
 import SQLite
 import Logging
 
@@ -27,6 +28,20 @@ end
 macro F64Matrix2()
     Array{Float64,2}(undef, (0, 2))
 end
+
+function register_hypothesis_tests(db::SQLite.DB, verbose::Bool)::Nothing
+
+    # Jarque-Bera test for normality
+    SQLite.register(
+        db,
+        @F64Vector,
+        (x, y) -> vcat(x, y),
+        x -> HypothesisTests.pvalue(HypothesisTests.JarqueBeraTest(x)),
+        name = "JB",
+    )
+    return nothing
+end
+
 
 function register_descriptive_functions(db::SQLite.DB, verbose::Bool)::Nothing
     @info "Registering Quantiles"
@@ -514,6 +529,9 @@ function register_functions(db::SQLite.DB; verbose::Bool = false)::Nothing
 
     # Registering distribution functions
     register_dist_functions(db, verbose)
+
+    # Registering Hypothesis Test functions 
+    register_hypothesis_tests(db, verbose)
 
 
     @info "Setting old logger as global"
