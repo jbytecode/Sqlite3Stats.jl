@@ -134,7 +134,7 @@ $$
 $$
 
 
-and `RNORM(mean, stddev)` draws a random number from a Normal distribution with mean `mean` ($\mu$) and standard deviation `stddev` ($\sigma$) which is defined as 
+and `RNORM(mean, stddev)` draws a random number from a Normal distribution with mean `mean` ( $\mu$ ) and standard deviation `stddev` ( $\sigma$ ) which is defined as 
 
 $$
 f(x; \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2} (\frac{x-\mu}{\sigma})^2}
