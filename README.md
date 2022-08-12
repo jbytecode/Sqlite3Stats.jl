@@ -123,21 +123,24 @@ result = DBInterface.execute(db, "select LININTERCEPT(x, y) from table") |> Data
 # Well-known Probability Related Functions 
 This family of functions implement QXXX(), PXXX(), and RXXX() for a probability density or mass function XXX. Q for quantile, p for propability or cdf value, R for random number. 
 
-`QNORM(x, mean, stddev)` returns the quantile value 
-
-$$
-\int_{-\infty}^{?} f(x; \mu, \sigma)dx = x
-$$
+`QNORM(p, mean, stddev)` returns the quantile value $q$ 
 
 whereas 
 
-`PNORM(x, mean, stddev)` returns
+`PNORM(q, mean, stddev)` returns $p$ using the equation
 
 $$
-\int_{-\infty}^{x} f(x; \mu, \sigma)dx = ?
+\int_{-\infty}^{q} f(x; \mu, \sigma)dx = p
 $$
 
-and `RNORM(mean, stddev)` draws a random number from a Normal distribution with mean `mean` and standard deviation `stddev`.
+
+and `RNORM(mean, stddev)` draws a random number from a Normal distribution with mean `mean` ($\mu$) and standard deviation `stddev` ($\sigma$) which is defined as 
+
+$$
+f(x; \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2} (\frac{x-\mu}{\sigma})^2}
+$$
+
+and $-\infty < x < \infty$.
 
 ```julia
 # Quantile of Normal Distribution with mean 0 and standard deviation 1
