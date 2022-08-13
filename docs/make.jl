@@ -7,7 +7,7 @@ makedocs(
                                   # assets = ["assets/favicon.ico", "assets/extra_styles.css"],
                                   # analytics = "UA-xxxxxxxxx-x",
                                  ),
-         sitename="SQLite3Stats.jl",
+         sitename="Sqlite3Stats.jl",
          authors = "Mehmet Hakan Satman",
          pages = [
                   "Index" => "index.md",
