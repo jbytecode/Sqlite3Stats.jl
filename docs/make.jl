@@ -1,4 +1,4 @@
-using Documenter, SQLite3Stats
+using Documenter, Sqlite3Stats
 
 makedocs(
          format = Documenter.HTML(
@@ -18,3 +18,6 @@ makedocs(
         )
 
 
+deploydocs(
+           repo = "github.com/jbytecode/Sqlite3Stats.jl",
+          )
