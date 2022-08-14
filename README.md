@@ -1,4 +1,4 @@
-[![Doc](https://img.shields.io/badge/docs-dev-blue.svg)](https://jbytecode.github.io/Sqlite3Stats.jl/dev/)
+[![Doc](https://img.shields.io/badge/docs-stable-blue.svg)](https://jbytecode.github.io/Sqlite3Stats.jl/dev/)
 
 # Sqlite3Stats
 Injecting StatsBase functions into any SQLite database in Julia.
