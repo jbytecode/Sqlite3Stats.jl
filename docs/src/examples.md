@@ -1,51 +1,32 @@
-[![Doc](https://img.shields.io/badge/docs-stable-blue.svg)](https://jbytecode.github.io/Sqlite3Stats.jl/dev/)
+# Examples
 
-# Sqlite3Stats
-Injecting StatsBase functions into any SQLite database in Julia.
+## Registered Functions
 
-# In Short
-Makes it possible to call 
 
-```sql
-select MEDIAN(fieldname) from tablename
-```
-
-in Julia where median is defined in Julia and related packages and the function is *injected* to use within SQLite. **Database file is not modified**.
-
-# Installation
-
-```julia
-julia> using Pkg
-julia> Pkg.add("Sqlite3Stats")
-```
-
-# Simple use
-
-```julia
-using SQLite
-using Sqlite3Stats 
-using DataFrames 
-
-# Any SQLite database
-# In our case, it is dbfile.db
-db = SQLite.DB("dbfile.db")
-
-# Injecting functions 
-Sqlite3Stats.register_functions(db)
-```
-
-# Registered Functions and Examples
+Firstly, import libraries to read and manipulate the interest database.
 
 ```Julia
-using SQLite
 using Sqlite3Stats 
+using SQLite
 using DataFrames 
+```
 
+
+Now, open a database file.
+
+```julia
 db = SQLite.DB("dbfile.db")
+```
 
-# Injecting functions 
+More information about the injecting functions can be obtained as follows.
+
+```julia
 Sqlite3Stats.register_functions(db)
+```
 
+## Obtaining Quartiles
+
+```julia
 # 1st Quartile 
 result = DBInterface.execute(db, "select Q1(num) from table") |> DataFrame 
 
@@ -62,8 +43,11 @@ result = DBInterface.execute(db, "select Q3(num) from table") |> DataFrame
 result = DBInterface.execute(db, "select QUANTILE(num, 0.25) from table") |> DataFrame 
 result = DBInterface.execute(db, "select QUANTILE(num, 0.50) from table") |> DataFrame 
 result = DBInterface.execute(db, "select QUANTILE(num, 0.75) from table") |> DataFrame 
+```
 
+## Covariance and Correlation
 
+```julia
 # Covariance 
 result = DBInterface.execute(db, "select COV(num, other) from table") |> DataFrame 
 
@@ -85,6 +69,11 @@ result = DBInterface.execute(db, "select IQR(num) from table") |> DataFrame
 # Skewness 
 result = DBInterface.execute(db, "select SKEWNESS(num) from table") |> DataFrame 
 
+```
+
+## Kurtosis, Mean and Standard Deviation
+
+```julia
 # Kurtosis 
 result = DBInterface.execute(db, "select KURTOSIS(num) from table") |> DataFrame 
 
@@ -111,18 +100,26 @@ result = DBInterface.execute(db, "select WMEAN(num, weights) from table") |> Dat
 
 # WMEDIAN for weighted mean
 result = DBInterface.execute(db, "select WMEDIAN(num, weights) from table") |> DataFrame 
+```
 
-# Entropy
+## Entropy
+
+```julia
 result = DBInterface.execute(db, "select ENTROPY(probs) from table") |> DataFrame 
+```
 
-# Slope (a) of linear regression y = b + ax
+## Slope (a) of linear regression y = b + ax
+```julia
 result = DBInterface.execute(db, "select LINSLOPE(x, y) from table") |> DataFrame 
+```
 
-# Intercept (b) of linear regression y = b + ax
+## Intercept (b) of linear regression y = b + ax
+```julia
 result = DBInterface.execute(db, "select LININTERCEPT(x, y) from table") |> DataFrame 
 ```
 
-# Well-known Probability Related Functions 
+## Well-known Probability Related Functions 
+
 This family of functions implement QXXX(), PXXX(), and RXXX() for a probability density or mass function XXX. Q for quantile, p for propability or cdf value, R for random number. 
 
 `QNORM(p, mean, stddev)` returns the quantile value $q$ 
@@ -155,7 +152,7 @@ result = DBInterface.execute(db, "select PNORM(-1.96, 0.0, 1.0) from table") |> 
 result = DBInterface.execute(db, "select RNORM(0.0, 1.0) from table") |> DataFrame 
 ```
 
-# Other functions for distributions
+## Other functions for distributions
 Note that Q, P, and R prefix correspond to Quantile, CDF (Probability), and Random (number), respectively. 
 
 - `QT(x, dof)`, `PT(x, dof)`, `RT(dof)` for Student-T Distribution
@@ -173,31 +170,7 @@ Note that Q, P, and R prefix correspond to Quantile, CDF (Probability), and Rand
 - `QWEIBULL(x, alpha, theta)`, `PWEIBULL(x, alpha, theta)`, `RWEIBULL(alpha, theta)` for Weibull Distribution
 
 
-# Hypothesis Tests
+## Hypothesis Tests
 - `JB(x)` for Jarque-Bera Normality Test (returns the p-value)
-
-
-# The Logic
-
-The package mainly uses the ```register``` function. For example, a single variable 
-function ```MEDIAN``` is registered as 
-
-```julia
-SQLite.register(db, [], 
-        (x,y) -> vcat(x, y), 
-        x -> StatsBase.quantile(x, 0.50), 
-        name = "MEDIAN")
-```
-
-whereas, the two-variable function ```COR``` is registered as 
-
-```julia
-SQLite.register(db, Array{Float64, 2}(undef, (0, 2)), 
-        (x, a, b) -> vcat(x, [a, b]'), 
-        x -> StatsBase.cor(x[:,1], x[:,2]), 
-        name = "COR", nargs = 2)
-```
-
-for Pearson's correlation coefficient. 
 
 
