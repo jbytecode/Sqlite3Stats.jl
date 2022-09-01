@@ -1,4 +1,5 @@
 [![Doc](https://img.shields.io/badge/docs-stable-blue.svg)](https://jbytecode.github.io/Sqlite3Stats.jl/dev/)
+[![codecov](https://codecov.io/gh/jbytecode/Sqlite3Stats.jl/branch/main/graph/badge.svg?token=71E9Y9BCT6)](https://codecov.io/gh/jbytecode/Sqlite3Stats.jl)
 
 # Sqlite3Stats
 Injecting StatsBase functions into any SQLite database in Julia.
