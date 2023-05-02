@@ -1,3 +1,8 @@
+# 0.1.6 (Upcoming Release)
+
+# 0.1.5
+- Update compatibility entries for StatsBase
+
 # v0.1.4
 - Add HypothesisTests as dependency
 - Implement Jarque-Bera test for normality
