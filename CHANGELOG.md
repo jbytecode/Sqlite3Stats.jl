@@ -1,4 +1,7 @@
-# 0.1.6 (Upcoming Release)
+# 0.1.7 (Upcoming Release)
+
+# 0.1.6
+- Update tests
 
 # 0.1.5
 - Update compatibility entries for StatsBase

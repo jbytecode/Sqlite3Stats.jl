@@ -4,19 +4,19 @@ using DataFrames
 using Sqlite3Stats.SQLite
 
 
-@testset "Functions" begin
-    db = SQLite.DB()
+db = SQLite.DB()
+Sqlite3Stats.register_functions(db)
 
+
+@testset "Functions" verbose = true begin
+
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table Numbers (val float, otherval float)")
     x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     for v in x
         y = 11.0 - v
         SQLite.execute(db, "insert into Numbers (val, otherval) values ($(v), $(y))")
     end
-
-    result = DBInterface.execute(db, "select val, otherval from Numbers") |> DataFrame
-
-    Sqlite3Stats.register_functions(db)
 
     result = DBInterface.execute(db, "select val, otherval from Numbers") |> DataFrame
     @test size(result) == (10, 2)
@@ -204,13 +204,11 @@ using Sqlite3Stats.SQLite
         @test result[!, "m"] == [33.0]
     end
 
-    SQLite.close(db)
 end
 
 
-@testset "Weighted Functions" begin
-    db = SQLite.DB()
-
+@testset "Weighted Functions" verbose = true begin
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table Numbers (val float, w float)")
     x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     w = [
@@ -230,10 +228,6 @@ end
         y = w[i]
         SQLite.execute(db, "insert into Numbers (val, w) values ($(v), $(y))")
     end
-
-    result = DBInterface.execute(db, "select val, w from Numbers") |> DataFrame
-
-    Sqlite3Stats.register_functions(db)
 
     result = DBInterface.execute(db, "select val, w from Numbers") |> DataFrame
     @test size(result) == (10, 2)
@@ -259,14 +253,11 @@ end
         @test result[!, "MYRESULT"] == [2.151281720651836]
     end
 
-    SQLite.close(db)
-
 end
 
-@testset "Linear Regression" begin
+@testset "Linear Regression" verbose = true begin
 
-    db = SQLite.DB()
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table Numbers (x float, y float)")
     x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     y = 2.0 .* x
@@ -275,8 +266,6 @@ end
         v = y[i]
         SQLite.execute(db, "insert into Numbers (x, y) values ($(u), $(v))")
     end
-
-    Sqlite3Stats.register_functions(db)
 
     @testset "Raw function" begin
         x = [1.0, 2.0, 3.0, 4.0, 5.0]
@@ -299,20 +288,15 @@ end
             DataFrame
         @test result[!, "MYRESULT"] == [0.0]
     end
-
-    SQLite.close(db)
 end
 
 
 
-@testset "Normal Distribution" begin
+@testset "Normal Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -326,7 +310,7 @@ end
                 db,
                 "select QNORM(0.025, 0, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"], [-1.95996], atol = tol)
+        @test isapprox(result[!, "MYRESULT"], [-1.95996], atol=tol)
     end
 
     @testset "PNORM" begin
@@ -335,7 +319,7 @@ end
                 db,
                 "select PNORM(1.9599639845400576, 0, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"], [0.0584451], atol = tol)
+        @test isapprox(result[!, "MYRESULT"], [0.0584451], atol=tol)
     end
 
     @testset "RNORM" begin
@@ -358,20 +342,15 @@ end
         @test result[!, "MYRESULT"][1] > -10.0
     end
 
-    SQLite.close(db)
-
 end
 
 
 
-@testset "T Distribution" begin
+@testset "T Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -385,7 +364,7 @@ end
                 db,
                 "select PT(1.9599639845400576,30) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.970326, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.970326, atol=tol)
     end
 
     @testset "QT" begin
@@ -394,7 +373,7 @@ end
                 db,
                 "select QT(0.025, 30) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], -2.04227, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], -2.04227, atol=tol)
     end
 
     @testset "RT" begin
@@ -405,18 +384,14 @@ end
         @test result[!, "MYRESULT"][1] > -10.0
     end
 
-    SQLite.close(db)
 end
 
 
-@testset "ChiSquare Distribution" begin
+@testset "ChiSquare Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -430,7 +405,7 @@ end
                 db,
                 "select PCHISQ(30, 30) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.534346, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.534346, atol=tol)
     end
 
     @testset "QCHISQ" begin
@@ -439,7 +414,7 @@ end
                 db,
                 "select QCHISQ(0.05, 30) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 18.4927, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 18.4927, atol=tol)
     end
 
     @testset "RCHISQ" begin
@@ -450,20 +425,16 @@ end
         @test result[!, "MYRESULT"][1] >= 0.0
     end
 
-    SQLite.close(db)
 end
 
 
 
 
-@testset "F Distribution" begin
+@testset "F Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -477,7 +448,7 @@ end
                 db,
                 "select PF(0.1109452, 3, 5) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.0499999, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.0499999, atol=tol)
     end
 
     @testset "QF" begin
@@ -486,7 +457,7 @@ end
                 db,
                 "select QF(0.05, 3, 5) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.1109452, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.1109452, atol=tol)
     end
 
     @testset "RF" begin
@@ -497,18 +468,14 @@ end
         @test result[!, "MYRESULT"][1] >= 0.0
     end
 
-    SQLite.close(db)
 end
 
 
-@testset "Poisson Distribution" begin
+@testset "Poisson Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -522,7 +489,7 @@ end
                 db,
                 "select PPOIS(1000000, 1000000) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol=tol)
     end
 
     @testset "QPOIS" begin
@@ -531,7 +498,7 @@ end
                 db,
                 "select QPOIS(0.50, 5) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 5.0, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 5.0, atol=tol)
     end
 
     @testset "RPOIS" begin
@@ -542,18 +509,14 @@ end
         @test result[!, "MYRESULT"][1] >= 0.0
     end
 
-    SQLite.close(db)
 end
 
 
-@testset "Binomial Distribution" begin
+@testset "Binomial Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -567,7 +530,7 @@ end
                 db,
                 "select PBINOM(5, 10, 0.5) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.62304687, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.62304687, atol=tol)
     end
 
     @testset "QBINOM" begin
@@ -576,7 +539,7 @@ end
                 db,
                 "select QBINOM(0.50, 10, 0.5) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 5.0, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 5.0, atol=tol)
     end
 
     @testset "RBINOM" begin
@@ -589,20 +552,16 @@ end
         @test result[!, "MYRESULT"][1] >= 0.0
     end
 
-    SQLite.close(db)
 end
 
 
 
 
-@testset "Uniform Distribution" begin
+@testset "Uniform Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -616,7 +575,7 @@ end
                 db,
                 "select PUNIF(5, 0, 10) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol=tol)
     end
 
     @testset "QUNIF" begin
@@ -625,7 +584,7 @@ end
                 db,
                 "select QUNIF(0.5, 5, 10) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 7.5, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 7.5, atol=tol)
     end
 
     @testset "RUNIF" begin
@@ -638,20 +597,16 @@ end
         @test result[!, "MYRESULT"][1] >= 0.0
     end
 
-    SQLite.close(db)
 end
 
 
 
 
-@testset "Exponential Distribution" begin
+@testset "Exponential Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -665,7 +620,7 @@ end
                 db,
                 "select PEXP(5, 10) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.39346934, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.39346934, atol=tol)
     end
 
     @testset "QEXP" begin
@@ -674,7 +629,7 @@ end
                 db,
                 "select QEXP(0.5, 10) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 6.93147180, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 6.93147180, atol=tol)
     end
 
     @testset "REXP" begin
@@ -685,21 +640,18 @@ end
         @test result[!, "MYRESULT"][1] >= 0.0
     end
 
-    SQLite.close(db)
 end
 
 
 
 
 
-@testset "Beta Distribution" begin
+@testset "Beta Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
 
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -713,7 +665,7 @@ end
                 db,
                 "select PBETA(0.5, 0.12, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.92018, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.92018, atol=tol)
     end
 
     @testset "QBETA" begin
@@ -722,7 +674,7 @@ end
                 db,
                 "select QBETA(0.5, 0.12, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.00310, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.00310, atol=tol)
     end
 
     @testset "RBETA" begin
@@ -735,20 +687,16 @@ end
         @test result[!, "MYRESULT"][1] >= 0.0
     end
 
-    SQLite.close(db)
 end
 
 
 
 
-@testset "Cauchy Distribution" begin
+@testset "Cauchy Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -762,7 +710,7 @@ end
                 db,
                 "select PCAUCHY(0, 0, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol=tol)
     end
 
     @testset "QCAUCHY" begin
@@ -771,7 +719,7 @@ end
                 db,
                 "select QCAUCHY(0.05, 0, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], -6.313751, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], -6.313751, atol=tol)
     end
 
     @testset "RCAUCHY" begin
@@ -783,18 +731,15 @@ end
         @test result[!, "MYRESULT"][1] isa Number
     end
 
-    SQLite.close(db)
 end
 
 
-@testset "Gamma Distribution" begin
+@testset "Gamma Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
 
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -808,7 +753,7 @@ end
                 db,
                 "select PGAMMA(0.75, 0.5, 1.0) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.7793286380801532, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.7793286380801532, atol=tol)
     end
 
     @testset "QGAMMA" begin
@@ -817,7 +762,7 @@ end
                 db,
                 "select QGAMMA(0.05, 0.5, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.0019660700000097625, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.0019660700000097625, atol=tol)
     end
 
     @testset "RGAMMA" begin
@@ -830,18 +775,14 @@ end
         @test result[!, "MYRESULT"][1] <= 15.0
     end
 
-    SQLite.close(db)
 end
 
 
-@testset "Frechet Distribution" begin
+@testset "Frechet Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -857,7 +798,7 @@ end
                 db,
                 "select PFRECHET(1.1299472763373901, 3) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol=tol)
     end
 
     @testset "QFRECHET" begin
@@ -866,7 +807,7 @@ end
                 db,
                 "select QFRECHET(0.5, 3) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 1.1299472763373901, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 1.1299472763373901, atol=tol)
     end
 
     @testset "RFRECHET" begin
@@ -879,19 +820,15 @@ end
         @test result[!, "MYRESULT"][1] >= 0.0
     end
 
-    SQLite.close(db)
 end
 
 
 
-@testset "Pareto Distribution" begin
+@testset "Pareto Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -907,7 +844,7 @@ end
                 db,
                 "select PPARETO(2, 1, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.5, atol=tol)
     end
 
     @testset "QPARETO" begin
@@ -916,7 +853,7 @@ end
                 db,
                 "select QPARETO(0.5, 1, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 2, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 2, atol=tol)
     end
 
     @testset "RPARETO" begin
@@ -928,20 +865,15 @@ end
         @test result[!, "MYRESULT"][1] isa Number
         @test result[!, "MYRESULT"][1] >= 1.0
     end
-
-    SQLite.close(db)
 end
 
 
 
-@testset "Weibull Distribution" begin
+@testset "Weibull Distribution" verbose = true begin
 
     tol = 0.001
 
-    db = SQLite.DB()
-
-    Sqlite3Stats.register_functions(db)
-
+    SQLite.execute(db, "drop table if exists Numbers")
     SQLite.execute(db, "create table numbers (NUM1 float, NUM2 float)")
     for i = 1:10
         a = rand()
@@ -957,7 +889,7 @@ end
                 db,
                 "select PWEIBULL(1, 1, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 0.6321205588285577, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 0.6321205588285577, atol=tol)
     end
 
     @testset "QWEIBULL" begin
@@ -966,7 +898,7 @@ end
                 db,
                 "select QWEIBULL(0.6321205588285577, 1, 1) as MYRESULT from numbers limit 1",
             ) |> DataFrame
-        @test isapprox(result[!, "MYRESULT"][1], 1.0, atol = tol)
+        @test isapprox(result[!, "MYRESULT"][1], 1.0, atol=tol)
     end
 
     @testset "RWEIBULL" begin
@@ -979,17 +911,16 @@ end
         @test result[!, "MYRESULT"][1] >= 0.0
     end
 
-    SQLite.close(db)
 end
 
 
 
 
-@testset "Hypothesis Tests" begin
+@testset "Hypothesis Tests" verbose = true begin
 
     @testset "Jarque-Bera test for normality" begin
-        db = SQLite.DB()
 
+        SQLite.execute(db, "drop table if exists Numbers")
         SQLite.execute(db, "create table Numbers (val float)")
         x = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
 
@@ -997,8 +928,6 @@ end
             v = x[i]
             SQLite.execute(db, "insert into Numbers (val) values ($(v))")
         end
-
-        Sqlite3Stats.register_functions(db)
 
         result = DBInterface.execute(db, "select JB(val) as myjb from Numbers") |> DataFrame
 
