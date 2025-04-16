@@ -124,7 +124,7 @@ result = DBInterface.execute(db, "select LININTERCEPT(x, y) from table") |> Data
 ```
 
 # Well-known Probability Related Functions 
-This family of functions implement QXXX(), PXXX(), and RXXX() for a probability density or mass function XXX. Q for quantile, p for propability or cdf value, R for random number. 
+This family of functions implement QXXX(), PXXX(), and RXXX() for a probability density or mass function XXX. Q for quantile, p for probability or cdf value, R for random number. 
 
 `QNORM(p, mean, stddev)` returns the quantile value $q$ 
 
